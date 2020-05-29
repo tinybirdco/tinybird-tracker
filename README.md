@@ -27,10 +27,10 @@ The tracker works by default with a 14 column data source called 'tracker'. It c
 curl \
 -H "Authorization: Bearer <DATASOURCES:CREATE token>" \
 -X POST "https://api.tinybird.co/v0/datasources?name=tracker&mode=create" \
--d schema="timestamp DateTime,session DateTime, account_name String,user_id String,location String,user_agent String,attr_0 String,attr_1 String,attr_2 String,attr_3 String,attr_4 String, attr_5 String, attr_6 String, attr_7 String"
+-d "schema=timestamp DateTime,session DateTime,account_name String,user_id String,location String,user_agent String,attr_0 String,attr_1 String,attr_2 String,attr_3 String,attr_4 String, attr_5 String, attr_6 String, attr_7 String"
 ```
 
-You can change the names and types of the 'attr_' columns in the schema to fit your needs. When issuing events, you are responsible to ensure those fields are use consitently.
+You can change the names and types of the 'attr_' columns in the schema to fit your needs. When issuing events, you are responsible to ensure those fields are used consitently.
 
 ## Instantiating the script
 
@@ -38,13 +38,13 @@ The script takes advantage of Tinybird Analytics' javascript library, so it must
 
 You will also need to create an append token with permissions just with write permissions for the tracker Datasource, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
 
-´´´
+```
 <script src="/static/js/tinybird.js"> </script>
 <script src="/static/js/t.js"> </script>
 <script>
   tracker('{{tracker_append_token}}', 'main', '_tracker', '{{api_host}}')
 </script>
-´´´
+```
 
 ## Issuing events
 
