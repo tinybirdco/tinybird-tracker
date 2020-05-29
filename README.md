@@ -9,7 +9,7 @@ The tracker helps you record events in your HTML page and stores them in a Data 
 By default, the tracker stores along every event basic fields like:
 
 * `timestamp (DateTime)` of the event
-* `session (Datetime)` when the user session started
+* `session_start (Datetime)` when the tracker is instantiated on a page
 * `account_name (String)` with a name that can be passed on instantiation to better split events
 * `user_id (String)`. An automatically generated uuid to track a given user through different pages. This ID is the only thing stored in a cookie
 * `location (String)`. The URL of the page where the event takes place.
@@ -27,7 +27,7 @@ The tracker works by default with a 14 column data source called 'tracker'. It c
 curl \
 -H "Authorization: Bearer <DATASOURCES:CREATE token>" \
 -X POST "https://api.tinybird.co/v0/datasources?name=tracker&mode=create" \
--d "schema=timestamp DateTime,session DateTime,account_name String,user_id String,location String,user_agent String,attr_0 String,attr_1 String,attr_2 String,attr_3 String,attr_4 String, attr_5 String, attr_6 String, attr_7 String"
+-d "schema=timestamp DateTime,session_start DateTime,account_name String,user_id String,location String,user_agent String,attr_0 String,attr_1 String,attr_2 String,attr_3 String,attr_4 String, attr_5 String, attr_6 String, attr_7 String"
 ```
 
 You can change the names and types of the 'attr_' columns in the schema to fit your needs. When issuing events, you are responsible to ensure those fields are used consitently.
