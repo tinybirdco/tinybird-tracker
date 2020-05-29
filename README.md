@@ -39,8 +39,8 @@ The script takes advantage of Tinybird Analytics' javascript library, so it must
 You will also need to create an append token with permissions just with write permissions for the tracker Datasource, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
 
 ```
-<script src="/static/js/tinybird.js"> </script>
-<script src="/static/js/t.js"> </script>
+<script src="https://cdn.tinybird.co/v1/tinybird.js"> </script>
+<script src="t.js"> </script>
 <script>
   tracker('{{tracker_append_token}}', 'main', '_tracker', '{{api_host}}')
 </script>
