@@ -86,7 +86,7 @@ function tracker(token, accountName, globalFunctionName, datasourceName, host) {
       accountName,
       userCookie,
       document.location.href,
-      encodeURIComponent(navigator.userAgent)
+      navigator.userAgent
     ].concat(Array.prototype.slice.call(arguments))
     if (ev.length < TRACKER_COLUMNS) {
       ev = ev.concat(Array(TRACKER_COLUMNS - ev.length).fill(''))
