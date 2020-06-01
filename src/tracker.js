@@ -41,7 +41,7 @@ function tracker(token, accountName, globalFunctionName, host) {
         '/v0/datasources?mode=append&name=' + DATASOURCE_NAME +
         '&token=' + token
       var formData = new FormData()
-      formData.append('csv', events)
+      formData.append('csv', rowsToCSV(events))
 
       fetch(url, {
         method: 'POST',
@@ -143,6 +143,25 @@ function getCookie(name) {
     }
   }
   return null
+}
+
+function rowsToCSV(rows) {
+  var escapeQuotes = function (str) {
+    return str.replace(/\"/g, '""')
+  }
+
+  return rows.map(function (r) {
+    return r.map(function (field) {
+      if (typeof(field) === 'string') {
+        field = escapeQuotes(field)
+        if (field[0] !== '"' || field[field.length - 1] !== '"') {
+          field = '"' + field  + '"'
+        }
+        return field
+      }
+      return field
+    }).join(',')
+  }).join('\n')
 }
 
 export default tracker
