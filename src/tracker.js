@@ -51,7 +51,7 @@ function tracker(token, accountName, globalFunctionName, host) {
         return r.json()
       })
       .then(function (res) {
-        if (res && !res.error) {
+        if (res) {
           events = []
           LOCAL_STORAGE.setItem(STORAGE_ITEM, '[]')
           delayUpload(TIMEOUT, MAX_RETRIES)
