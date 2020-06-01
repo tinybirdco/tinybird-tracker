@@ -60,7 +60,7 @@ function tracker(token, accountName, globalFunctionName, host) {
         }
         uploading = false
       })
-      .catch(err => {
+      .catch(function () {
         onError()
       })
     } else {
