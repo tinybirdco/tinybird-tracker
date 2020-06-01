@@ -79,7 +79,14 @@ function tracker(token, accountName, globalFunctionName, host) {
   tracker.flush = uploadEvents
 
   window[globalFunctionName] = function () {
-    var ev = [dateFormatted(), session, accountName, userCookie, document.location.href, navigator.userAgent].concat(Array.prototype.slice.call(arguments))
+    var ev = [
+      dateFormatted(),
+      session,
+      accountName,
+      userCookie,
+      document.location.href,
+      encodeURIComponent(navigator.userAgent)
+    ].concat(Array.prototype.slice.call(arguments))
     if (ev.length < TRACKER_COLUMNS) {
       ev = ev.concat(Array(TRACKER_COLUMNS - ev.length).fill(''))
     }
