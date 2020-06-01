@@ -11,12 +11,13 @@ var TIMEOUT = 2000
 /**
  * install a tracker for the user
  */
-function tracker(token, accountName, globalFunctionName, host) {
+function tracker(token, accountName, globalFunctionName, datasourceName, host) {
   globalFunctionName = globalFunctionName || 'tracker_ga'
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
   var session = dateFormatted()
   var uploading = false
+  var datasource = datasourceName || DATASOURCE_NAME
 
   if (!userCookie) {
     userCookie = uuidv4()
@@ -38,7 +39,7 @@ function tracker(token, accountName, globalFunctionName, host) {
       uploading = true
       
       var url = (host || 'https://api.tinybird.co') +
-        '/v0/datasources?mode=append&name=' + DATASOURCE_NAME +
+        '/v0/datasources?mode=append&name=' + datasource +
         '&token=' + token
       var formData = new FormData()
       formData.append('csv', rowsToCSV(events))
