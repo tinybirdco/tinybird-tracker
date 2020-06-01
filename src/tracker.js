@@ -36,10 +36,14 @@ function tracker(token, accountName, globalFunctionName, host) {
 
     if (events.length > 0) {
       uploading = true
+      
+      var url = (host || 'https://api.tinybird.co') +
+        '/v0/datasources?mode=append&name=' + DATASOURCE_NAME +
+        '&token=' + token
       var formData = new FormData()
       formData.append('csv', events)
 
-      fetch(`${host || 'https://api.tinybird.co'}/v0/datasources?mode=append&name=${DATASOURCE_NAME}&token=${token}`, {
+      fetch(url, {
         method: 'POST',
         body: formData
       })
