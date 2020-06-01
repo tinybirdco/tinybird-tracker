@@ -9,8 +9,8 @@
   "scripts": {
     "build": "npm run dev:build",
     "dev": "npm run dev:build",
-    "dev:build": "microbundle -f modern,es,cjs,umd,iife --external=none",
-    "dev:watch": "microbundle -f modern,es,cjs,umd,iife --external=none watch"
+    "dev:build": "microbundle -f iife --external=none",
+    "dev:watch": "microbundle -f iife --external=none watch"
   },
   "author": "Tinybird team",
   "license": "MIT",
