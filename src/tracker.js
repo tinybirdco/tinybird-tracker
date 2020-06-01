@@ -80,9 +80,9 @@ function tracker(token, accountName, globalFunctionName, host) {
     }
     events.push(ev)
 
-    // when the event is pageload send it right awat, do not wait to the flush
+    // If the event is pageload, don't wait to the flush
     if(arguments[0] === 'pageload') {
-      uploadEvents();
+      uploadEvents()
     }
   }
 
