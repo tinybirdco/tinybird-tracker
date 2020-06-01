@@ -1,62 +1,63 @@
 import fetch from 'unfetch'
 
-const TRACKER_COLUMNS = 14
-const cookieName = '_track'
-const localStorage = window.localStorage
-const storageItem = 'tinybird_events'
-const datasourceName = 'tracker'
-const MAX_RETRIES = 5
-const TIMEOUT = 2000
+var TRACKER_COLUMNS = 14
+var COOKIE_NAME = '_track'
+var LOCAL_STORAGE = window.localStorage
+var STORAGE_ITEM = 'tinybird_events'
+var DATASOURCE_NAME = 'tracker'
+var MAX_RETRIES = 5
+var TIMEOUT = 2000
 
 /**
  * install a tracker for the user
  */
 function tracker(token, accountName, globalFunctionName, host) {
   globalFunctionName = globalFunctionName || 'tracker_ga'
-  let userCookie = getCookie(cookieName)
+  var userCookie = getCookie(COOKIE_NAME)
+  var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
+  var session = dateFormatted()
+  var uploading = false
 
   if (!userCookie) {
     userCookie = uuidv4()
-    setCookie(cookieName, userCookie)
+    setCookie(COOKIE_NAME, userCookie)
   }
 
-  const session = dateFormatted()
-  let events = JSON.parse(localStorage.getItem(storageItem) || '[]')
-
-  var uploading = false
   function uploadEvents(n) {
     if (uploading) return
 
+    function onError () {
+      if (n > 0) {
+        // set uploading to false to allow recheck
+        uploading = false
+        delayUpload(TIMEOUT, n - 1)
+      }
+    }
+
     if (events.length > 0) {
       uploading = true
-      const formData = new FormData()
+      var formData = new FormData()
       formData.append('csv', events)
 
-      fetch(`${host || 'https://api.tinybird.co'}/v0/datasources?mode=append&name=${datasourceName}&token=${token}`, {
+      fetch(`${host || 'https://api.tinybird.co'}/v0/datasources?mode=append&name=${DATASOURCE_NAME}&token=${token}`, {
         method: 'POST',
         body: formData
       })
-      .then(r => r.json())
-      .then(res => {
+      .then(function (r) {
+        return r.json()
+      })
+      .then(function (res) {
         if (res && !res.error) {
           events = []
-          window.localStorage.setItem(storageItem, '[]')
+          LOCAL_STORAGE.setItem(STORAGE_ITEM, '[]')
           delayUpload(TIMEOUT, MAX_RETRIES)
         } else {
-          if (n > 0) {
-            // set uploading to false to allow recheck
-            uploading = false
-            delayUpload(TIMEOUT, n - 1)
-          }
+          onError()
         }
         uploading = false
       })
       .catch(err => {
-        if (n > 0) {
-          // set uploading to false to allow recheck
-          uploading = false
-          delayUpload(TIMEOUT, n - 1)
-        }
+        onError()
       })
     } else {
       delayUpload(TIMEOUT, MAX_RETRIES)
@@ -74,7 +75,7 @@ function tracker(token, accountName, globalFunctionName, host) {
   tracker.flush = uploadEvents
 
   window[globalFunctionName] = function () {
-    let ev = [dateFormatted(), session, accountName, userCookie, document.location.href, navigator.userAgent].concat(Array.prototype.slice.call(arguments))
+    var ev = [dateFormatted(), session, accountName, userCookie, document.location.href, navigator.userAgent].concat(Array.prototype.slice.call(arguments))
     if (ev.length < TRACKER_COLUMNS) {
       ev = ev.concat(Array(TRACKER_COLUMNS - ev.length).fill(''))
     }
@@ -87,7 +88,7 @@ function tracker(token, accountName, globalFunctionName, host) {
   }
 
   function die() {
-    localStorage.setItem(storageItem, JSON.stringify(events))
+    LOCAL_STORAGE.setItem(STORAGE_ITEM, JSON.stringify(events))
     uploadEvents()
   }
 
@@ -112,17 +113,17 @@ function setCookie(name, value) {
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0
-    const v = c == 'x' ? r : (r & 0x3 | 0x8)
+    var r = Math.random() * 16 | 0
+    var v = c == 'x' ? r : (r & 0x3 | 0x8)
     return v.toString(16)
   })
 }
 
 function getCookie(name) {
-  const nameEQ = name + "="
-  const ca = document.cookie.split(';')
-  for (let i = 0; i < ca.length; ++i) {
-    let c = ca[i]
+  var nameEQ = name + "="
+  var ca = document.cookie.split(';')
+  for (var i = 0; i < ca.length; ++i) {
+    var c = ca[i]
     while (c.charAt(0) === ' ') {
       c = c.substring(1, c.length)
     }
