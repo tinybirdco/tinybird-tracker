@@ -7,17 +7,26 @@ var STORAGE_ITEM = 'tinybird_events'
 var DATASOURCE_NAME = 'tracker'
 var MAX_RETRIES = 5
 var TIMEOUT = 2000
+var DEFAULT_FUNCTION_NAME = 'tracker_ga'
+var HOST = 'https://api.tinybird.co'
 
 /**
  * install a tracker for the user
  */
 function tracker(token, accountName, globalFunctionName, datasourceName, host) {
-  globalFunctionName = globalFunctionName || 'tracker_ga'
+  if (!token) {
+    throw new Error('token is needed for sending events') 
+  }
+
+  accountName = accountName || 'main'
+  globalFunctionName = globalFunctionName || DEFAULT_FUNCTION_NAME
+  datasourceName = datasourceName || DATASOURCE_NAME
+  host = host || HOST
+  
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
   var session = dateFormatted()
   var uploading = false
-  var datasource = datasourceName || DATASOURCE_NAME
 
   if (!userCookie) {
     userCookie = uuidv4()
@@ -38,8 +47,8 @@ function tracker(token, accountName, globalFunctionName, datasourceName, host) {
     if (events.length > 0) {
       uploading = true
       
-      var url = (host || 'https://api.tinybird.co') +
-        '/v0/datasources?mode=append&name=' + datasource +
+      var url = host +
+        '/v0/datasources?mode=append&name=' + datasourceName +
         '&token=' + token
       var formData = new FormData()
       formData.append('csv', rowsToCSV(events))
