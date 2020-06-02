@@ -4,7 +4,7 @@
   "description": "Tinybird tracker",
   "source": "src/tracker.js",
   "main": "dist/tinybird-tracker.js",
-  "module": "dist/tinybird-tracker.module.js",
+  "module": "dist/tinybird-tracker.m.js",
   "unpkg": "dist/tinybird-tracker.umd.js",
   "scripts": {
     "build": "npm run dev:build",
