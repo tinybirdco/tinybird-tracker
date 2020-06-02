@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/tinybird/tinybird-tracker.js.git"
+    "url": "git+ssh://git@github.com/tinybirdco/tinybird-tracker.git"
   },
   "keywords": [
     "tinybird",
