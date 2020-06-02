@@ -39,7 +39,7 @@ You will need to create an append token with permissions just with write permiss
 ```
 <script src="https://cdn.tinybird.co/static/js/t.js?client=whatever"></script>
 <script>
-  tracker('{{tracker_append_token}}', 'main', '_tracker', '{{api_host}}')
+  tracker('{{tracker_append_token}}', 'main', '_tracker')
 </script>
 ```
 
