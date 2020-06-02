@@ -1,0 +1,13 @@
+<html>
+  <head></head>
+  <body>
+    <script src="../dist/tinybird-tracker.js"></script>
+    <script>
+      // Init
+      tracker('p.eyJ1IjogIjdhYTRhZTBhLTVhODAtNGNkZi04ZTk4LTE4YTIzZTExZTllYSIsICJpZCI6ICI5YjJhZTlmMy03NjQyLTRhYTItYjQ1Mi0yZTcwOGUyNTU0MGIifQ.fuq4r4z2sx1o94fJbAtxauvLKdcWsBmP2S5HpWrqNGY', 'main', '_tracker', 'tracker', 'http://localhost:8001')
+      // Send event
+      _tracker('pageload', document.referrer, 'whatever', new Date().getTime())
+    </script>
+    <h1>Hello world</h1>
+  </body>
+</html>
