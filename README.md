@@ -23,7 +23,7 @@ Additionally, as part of every event, you can pass along up to 8 additional attr
 
 The tracker works by default with a 14 column data source called 'tracker'. It can be created with the following command:
 
-```
+```shell
 curl \
 -H "Authorization: Bearer <DATASOURCES:CREATE token>" \
 -X POST "https://api.tinybird.co/v0/datasources?name=tracker&mode=create" \
@@ -36,7 +36,7 @@ You can change the names and types of the 'attr_' columns in the schema to fit y
 
 You will need to create an append token with permissions just with write permissions for the tracker Datasource, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
 
-```
+```html
 <script src="https://cdn.tinybird.co/static/js/t.js?client=whatever"></script>
 <script>
   tracker('{{tracker_append_token}}', 'main', '_tracker')
@@ -47,13 +47,13 @@ You will need to create an append token with permissions just with write permiss
 
 Once the script is instantiated, you can call it by passing parameters to it. The following would be an example "page_load" that keeps track of the referrer as well as some other string (e.g. the nick for a specific landing page):
 
-```
+```javascript
 _tracker('pageload', document.referrer, 'landing_page_1')
 ```
 
 The following would be an example to trigger "onclick":
 
-```
+```javascript
 _tracker('click', document.referrer, 'landing_page_1', 'sign-up button')
 ```
 
