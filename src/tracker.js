@@ -17,7 +17,7 @@ var tracker = (function () {
   
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
-  var session = dateFormatted()
+  var session = dateFormatted(new Date(this.tbt.l))
   var uploading = false
   var token
 
