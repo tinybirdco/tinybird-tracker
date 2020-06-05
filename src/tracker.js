@@ -11,15 +11,15 @@ var tracker = (function () {
   var DEFAULT_FUNCTION_NAME = 'tbt'
   var HOST = 'https://api.tinybird.co'
 
-  var datasourceName
+  var token
   var accountName
+  var datasourceName
   var host
   
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
   var session = dateFormatted(new Date(this.tbt.l))
   var uploading = false
-  var token
 
   if (!userCookie) {
     userCookie = uuidv4()
@@ -99,6 +99,7 @@ var tracker = (function () {
   }
 
   function addEvent() {
+    var argsArray = Array.prototype.slice.call(arguments)[0]
     var ev = [
       dateFormatted(),
       session,
@@ -106,14 +107,14 @@ var tracker = (function () {
       userCookie,
       document.location.href,
       navigator.userAgent
-    ].concat(Array.prototype.slice.call(arguments)[0])
+    ].concat(argsArray)
     if (ev.length < TRACKER_COLUMNS) {
       ev = ev.concat(Array(TRACKER_COLUMNS - ev.length).fill(''))
     }
     events.push(ev)
 
     // If the event is pageload, don't wait to the flush
-    if(arguments[0] === 'pageload') {
+    if(argsArray[0] === 'pageload') {
       uploadEvents()
     }
   }
