@@ -27,9 +27,9 @@ var tracker = (function () {
   }
   
   function init() {
-    var args = Array.prototype.slice.call(arguments)
+    var argsArray = Array.prototype.slice.call(arguments)[0]
 
-    if (!args[0][0]) {
+    if (!argsArray[0]) {
       throw new Error('token is needed for sending events') 
     }
 
@@ -37,10 +37,10 @@ var tracker = (function () {
       throw new Error('tracker already initialized')
     }
 
-    token = args[0][0]
-    accountName = args[0][1] || 'main'
-    datasourceName = args[0][2] || DATASOURCE_NAME
-    host = args[0][3] || HOST
+    token = argsArray[0]
+    accountName = argsArray[1] || 'main'
+    datasourceName = argsArray[2] || DATASOURCE_NAME
+    host = argsArray[3] || HOST
   }
 
   function uploadEvents(n) {
