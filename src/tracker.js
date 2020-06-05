@@ -1,36 +1,46 @@
 import fetch from 'unfetch'
 
-var TRACKER_COLUMNS = 14
-var COOKIE_NAME = '_track'
-var LOCAL_STORAGE = window.localStorage
-var STORAGE_ITEM = 'tinybird_events'
-var DATASOURCE_NAME = 'tracker'
-var MAX_RETRIES = 5
-var TIMEOUT = 2000
-var DEFAULT_FUNCTION_NAME = 'tracker_ga'
-var HOST = 'https://api.tinybird.co'
+var tracker = (function () {
+  var TRACKER_COLUMNS = 14
+  var COOKIE_NAME = '_track'
+  var LOCAL_STORAGE = this.localStorage
+  var STORAGE_ITEM = 'tinybird_events'
+  var DATASOURCE_NAME = 'tracker'
+  var MAX_RETRIES = 5
+  var TIMEOUT = 2000
+  var DEFAULT_FUNCTION_NAME = 'tbt'
+  var HOST = 'https://api.tinybird.co'
 
-/**
- * install a tracker for the user
- */
-function tracker(token, accountName, globalFunctionName, datasourceName, host) {
-  if (!token) {
-    throw new Error('token is needed for sending events') 
-  }
-
-  accountName = accountName || 'main'
-  globalFunctionName = globalFunctionName || DEFAULT_FUNCTION_NAME
-  datasourceName = datasourceName || DATASOURCE_NAME
-  host = host || HOST
+  var datasourceName
+  var accountName
+  var host
   
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
   var session = dateFormatted()
   var uploading = false
+  var token
 
   if (!userCookie) {
     userCookie = uuidv4()
     setCookie(COOKIE_NAME, userCookie)
+  }
+  
+  function init() {
+    var args = Array.prototype.slice.call(arguments)
+
+    if (!args[0][0]) {
+      throw new Error('token is needed for sending events') 
+    }
+
+    if (token) {
+      throw new Error('tracker already initialized')
+    }
+
+    token = args[0][0]
+    accountName = args[0][1] || 'main'
+    datasourceName = args[0][2] || DATASOURCE_NAME
+    host = args[0][3] || HOST
   }
 
   function uploadEvents(n) {
@@ -84,11 +94,11 @@ function tracker(token, accountName, globalFunctionName, datasourceName, host) {
     }, t)
   }
 
-  delayUpload(TIMEOUT, MAX_RETRIES)
+  function flush() {
+    uploadEvents()
+  }
 
-  tracker.flush = uploadEvents
-
-  window[globalFunctionName] = function () {
+  function addEvent() {
     var ev = [
       dateFormatted(),
       session,
@@ -96,7 +106,7 @@ function tracker(token, accountName, globalFunctionName, datasourceName, host) {
       userCookie,
       document.location.href,
       navigator.userAgent
-    ].concat(Array.prototype.slice.call(arguments))
+    ].concat(Array.prototype.slice.call(arguments)[0])
     if (ev.length < TRACKER_COLUMNS) {
       ev = ev.concat(Array(TRACKER_COLUMNS - ev.length).fill(''))
     }
@@ -108,70 +118,113 @@ function tracker(token, accountName, globalFunctionName, datasourceName, host) {
     }
   }
 
+  function parseItems(items) {
+    function parseItem(item) {
+      if (!Array.isArray(item)) {
+        throw new Error('Only array events are allowed')
+      }
+
+      if (!item.length) {
+        throw new Error('Event type is needed')
+      }
+
+      switch (item[0]) {
+        case 'init': 
+          init(item.slice(1))
+          break;
+        case 'send': 
+          addEvent(item.slice(1))
+          break;
+        case 'flush': 
+          flush()
+          break;
+        default: 
+          throw new Error(item[0] + ' type does not exist')
+      }
+    }
+
+    if (!Array.isArray(items)) {
+      throw new Error('Events can only be sent as an array')
+    }
+
+    for (var i = 0, l = items.length; i < l; i++) {
+      parseItem(Array.prototype.slice.call(items[i]))
+    }
+  }
+
   function die() {
     LOCAL_STORAGE.setItem(STORAGE_ITEM, JSON.stringify(events))
     uploadEvents()
   }
 
-  window.addEventListener('beforeunload', die)
-  window.addEventListener('unload', die, false)
-}
+  this.addEventListener('beforeunload', die)
+  this.addEventListener('unload', die, false)
 
-window['tracker'] = tracker
+  // Parse first what tbt.q contains
+  parseItems(this[DEFAULT_FUNCTION_NAME].q)
 
-/**
- * utility methods
- */
-
-function dateFormatted(d) {
-  d = d || new Date()
-  return d.toISOString().replace('T', ' ').split('.')[0]
-}
-
-function setCookie(name, value) {
-  document.cookie = name + "=" + (value || "") + "; path=/"
-}
-
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0
-    var v = c == 'x' ? r : (r & 0x3 | 0x8)
-    return v.toString(16)
-  })
-}
-
-function getCookie(name) {
-  var nameEQ = name + "="
-  var ca = document.cookie.split(';')
-  for (var i = 0; i < ca.length; ++i) {
-    var c = ca[i]
-    while (c.charAt(0) === ' ') {
-      c = c.substring(1, c.length)
-    }
-    if (c.indexOf(nameEQ) === 0) {
-      return c.substring(nameEQ.length, c.length)
-    }
-  }
-  return null
-}
-
-function rowsToCSV(rows) {
-  var escapeQuotes = function (str) {
-    return str.replace(/\"/g, '""')
+  // Overwritte function
+  this[DEFAULT_FUNCTION_NAME] = function () {
+    parseItems([arguments])
   }
 
-  return rows.map(function (r) {
-    return r.map(function (field) {
-      if (typeof(field) === 'string') {
-        field = escapeQuotes(field)
-        if (field[0] !== '"' || field[field.length - 1] !== '"') {
-          field = '"' + field  + '"'
+  // Start upload
+  delayUpload(TIMEOUT, MAX_RETRIES)
+  
+  /**
+   * utility methods
+   */
+
+  function dateFormatted(d) {
+    d = d || new Date()
+    return d.toISOString().replace('T', ' ').split('.')[0]
+  }
+
+  function setCookie(name, value) {
+    document.cookie = name + "=" + (value || "") + "; path=/"
+  }
+
+  function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0
+      var v = c == 'x' ? r : (r & 0x3 | 0x8)
+      return v.toString(16)
+    })
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "="
+    var ca = document.cookie.split(';')
+    for (var i = 0; i < ca.length; ++i) {
+      var c = ca[i]
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1, c.length)
+      }
+      if (c.indexOf(nameEQ) === 0) {
+        return c.substring(nameEQ.length, c.length)
+      }
+    }
+    return null
+  }
+
+  function rowsToCSV(rows) {
+    var escapeQuotes = function (str) {
+      return str.replace(/\"/g, '""')
+    }
+
+    return rows.map(function (r) {
+      return r.map(function (field) {
+        if (typeof(field) === 'string') {
+          field = escapeQuotes(field)
+          if (field[0] !== '"' || field[field.length - 1] !== '"') {
+            field = '"' + field  + '"'
+          }
+          return field
         }
         return field
-      }
-      return field
-    }).join(',')
-  }).join('\n')
-}
+      }).join(',')
+    }).join('\n')
+  }
+})(window)
 
 export default tracker
