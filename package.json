@@ -15,8 +15,8 @@
   "author": "Tinybird team",
   "license": "MIT",
   "devDependencies": {
-    "unfetch": "^4.1.0",
-    "microbundle": "^0.12.0"
+    "microbundle": "^0.12.0",
+    "unfetch": "^4.1.0"
   },
   "engines": {
     "node": ">=12.14.1"

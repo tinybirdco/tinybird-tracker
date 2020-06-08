@@ -6,6 +6,7 @@ var tracker = (function () {
   var LOCAL_STORAGE = this.localStorage
   var STORAGE_ITEM = 'tinybird_events'
   var DATASOURCE_NAME = 'tracker'
+  var ACCOUNT_NAME = 'main'
   var MAX_RETRIES = 5
   var TIMEOUT = 2000
   var DEFAULT_FUNCTION_NAME = 'tbt'
@@ -14,11 +15,12 @@ var tracker = (function () {
   var token
   var accountName
   var datasourceName
+  var functionName
   var host
   
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(LOCAL_STORAGE.getItem(STORAGE_ITEM) || '[]')
-  var session = dateFormatted(new Date(this.tbt.l))
+  var session = dateFormatted()
   var uploading = false
 
   if (!userCookie) {
@@ -27,20 +29,15 @@ var tracker = (function () {
   }
   
   function init() {
-    var argsArray = Array.prototype.slice.call(arguments)[0]
-
-    if (!argsArray[0]) {
+    if (!getParameterByName('t')) {
       throw new Error('token is needed for sending events') 
     }
 
-    if (token) {
-      throw new Error('tracker already initialized')
-    }
-
-    token = argsArray[0]
-    accountName = argsArray[1] || 'main'
-    datasourceName = argsArray[2] || DATASOURCE_NAME
-    host = argsArray[3] || HOST
+    token = getParameterByName('t')
+    accountName = getParameterByName('a') || ACCOUNT_NAME
+    functionName = getParameterByName('f') || DEFAULT_FUNCTION_NAME
+    datasourceName = getParameterByName('da') || DATASOURCE_NAME
+    host = getParameterByName('h') || HOST
   }
 
   function uploadEvents(n) {
@@ -124,24 +121,11 @@ var tracker = (function () {
       if (!Array.isArray(item)) {
         throw new Error('Only array events are allowed')
       }
+      addEvent(item)
+    }
 
-      if (!item.length) {
-        throw new Error('Event type is needed')
-      }
-
-      switch (item[0]) {
-        case 'init': 
-          init(item.slice(1))
-          break;
-        case 'send': 
-          addEvent(item.slice(1))
-          break;
-        case 'flush': 
-          flush()
-          break;
-        default: 
-          throw new Error(item[0] + ' type does not exist')
-      }
+    if (!items) {
+      return
     }
 
     if (!Array.isArray(items)) {
@@ -161,13 +145,25 @@ var tracker = (function () {
   this.addEventListener('beforeunload', die)
   this.addEventListener('unload', die, false)
 
-  // Parse first what tbt.q contains
-  parseItems(this[DEFAULT_FUNCTION_NAME].q)
+  // Initialize tracker
+  init()
 
-  // Overwritte function
-  this[DEFAULT_FUNCTION_NAME] = function () {
-    parseItems([arguments])
-  }
+  // Parse first what tbt contains
+  parseItems(this[functionName])
+
+  // Overwritte tbt.push function
+  this[functionName] = {
+    push: function (item) {
+      var items
+      if (arguments.length > 1) {
+        items = Array.prototype.slice.call(arguments)
+      } else {
+        items = item
+      }
+
+      parseItems(items)
+    }
+  } 
 
   // Start upload
   delayUpload(TIMEOUT, MAX_RETRIES)
@@ -226,6 +222,16 @@ var tracker = (function () {
       }).join(',')
     }).join('\n')
   }
+
+  function getParameterByName(name, url) {
+    if (!url) url = document.currentScript && document.currentScript.src || '';
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
 })(window)
 
 export default tracker

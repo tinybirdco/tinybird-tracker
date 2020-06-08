@@ -1,23 +1,38 @@
 <html>
-  <head></head>
-  <body>
+  <head>
     <script>
-      (function(s,t,a,n,d,e,v){s[d]=s[d]||function(){(s[d].q=s[d].q||[]).push(arguments)};s[d].l=1*new Date();
-      e=t.createElement(a),v=t.getElementsByTagName(a)[0],e.async=1,e.src=n,v.parentNode.insertBefore(e,v);})
-      (window, document, 'script', 'http://localhost:8002/dist/tinybird-tracker.js?client=whatever', 'tbt');
-
-      tbt(
-        'init',
-        'p.eyJ1IjogIjA5YTAzYTc2LTk2ZmYtNDg2MC1hNGFjLTFhZWFiYjA2YThjOSIsICJpZCI6ICJkMzU5YmIxMi1kM2FhLTRlZjQtOGNlNS04MjYzNDQwNGQyYzAifQ.hxK_345jSwnReJDAwZZ3g97vwW28uiFDoCRAOJqXMWM',
-        'main',
-        'tracker',
-        'http://localhost:8001'
-      );
-      tbt('send', 'pageload', document.referrer, 'landing_page_1')
+      window.tbt = window.tbt || []
+      tbt.push(['pageload', document.referrer, 'test_page_1' ])
     </script>
+
+    <script>
+      (function(t,i0,n,y,b,i1,r,d){
+        t[y]=t[y]||[];
+        var z=i0.getElementsByTagName(n)[0],
+          w=i0.createElement(n),
+          fn=y!='tbt'?'&f='+y:'',
+          a=!!i1?'&a='+i1:'',
+          da=!!r?'&d='+r:'',
+          h=!!d?'&h='+d:'';
+        w.async=true;
+        w.src='http://localhost:8000/dist/tinybird-tracker.js?c=whatever&t='+b+fn+a+da+h;
+        z.parentNode.insertBefore(w,z);
+      })(window, document, 'script', 'tbt', 'p.eyJ1IjogImRlYTdkMTU1LWY5ZGMtNGZjZC04YWUyLTI5NzZlZTY2YjY4ZCIsICJpZCI6ICIwYWU2YjJkYy1hZDllLTQ4ZGItYjI2MC03NDkwMmZhNTRhNTIifQ.ObgYIaVnsYHgq9fI9H8E8eb3C_0-lgdrMaAfI9ETHX4', 'main', 'tracker', 'http://localhost:8001')
+    </script>
+  </head>
+  <body>
     <h1>Hello world</h1>
-    <button onclick="tbt('send', 'click', document.referrer, 'whatever')">
-      click it!
+
+    <button onclick="tbt.push()">
+      no event
+    </button>
+    
+    <button onclick="tbt.push(['click', document.referrer, 'whatever'])">
+      single event
+    </button>
+
+    <button onclick="tbt.push(['click', document.referrer, 'whatever'], ['click', document.referrer, 'whatever 2'])">
+      multiple events
     </button>
   </body>
 </html>
