@@ -38,26 +38,30 @@ You will need to create an append token with permissions just with write permiss
 
 ```html
 <script>
-(function(s,t,a,n,d,e,v){s[d]=s[d]||function(){(s[d].q=s[d].q||[]).push(arguments)};s[d].l=1*new Date();
-e=t.createElement(a),v=t.getElementsByTagName(a)[0],e.async=1,e.src=n,v.parentNode.insertBefore(e,v);})
-(window, document, 'script', 'https://cdn.tinybird.co/static/js/t.js?client=whatever', 'tbt');
-
-tbt('init', '{{tracker_append_token}}') // ..., '{{account_name}}', '{{table_name}}', '{{api_host}}')
+(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+d:'';
+w.async=true;w.src='https://cdn.tinybird.co/static/js/t.js?c=whatever&t='+b+fn+a+da+h;z.parentNode.insertBefore(w,z);
+})(window, document, 'script', 'tbt', '{{tracker_append_token}}')
 </script>
 ```
 
 ## Issuing events
 
-Once the script is instantiated, you can call it by passing parameters to it. The following would be an example "page_load" that keeps track of the referrer as well as some other string (e.g. the nick for a specific landing page):
+If the `tbt` code is called after the container snippet, any variables declared within will not be available for the tracker to selectively fire events on page load. This is an example of storing an event of `pageload` which will be triggered once the script is loaded:
 
-```javascript
-tbt('send', 'pageload', document.referrer, 'landing_page_1')
+```html
+<script>
+  window.tbt = window.tbt || []
+  tbt.push(['pageload', document.referrer, 'landing_page_1' ])
+</script>
+<!-- Tinybird Tracker -->
+...
+<!-- End Tinybird Tracker -->
 ```
 
 The following would be an example to trigger "onclick":
 
 ```javascript
-tbt('send', 'click', document.referrer, 'landing_page_1', 'sign-up button')
+tbt.push(['click', document.referrer, 'landing_page_1', 'sign-up button'])
 ```
 
 
