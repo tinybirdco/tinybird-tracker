@@ -138,7 +138,7 @@ describe('Tracker', () => {
       expect(parts[7]).toBe('\"https://blog.tinybird.co\"')
       expect(parts[8]).toBe('\"sign up\"')
       expect(parts[9]).toBe('\"whatever@hey.com\"')
-      return Promise.resolve()
+      return Promise.resolve({})
     })
 
     tracker(a)
@@ -187,7 +187,7 @@ describe('Tracker', () => {
       expect(sndRowParts[7]).toBe('\"https://docs.tinybird.co\"')
       expect(sndRowParts[8]).toBe('\"section 2\"')
 
-      return Promise.resolve()
+      return Promise.resolve({})
     })
 
     tracker(w)
@@ -201,6 +201,102 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalled()
+
+    jest.clearAllTimers()
+  })
+
+  it('should send pending localStorage events after 2sec', async () => {
+    jest.useFakeTimers()
+
+    const ls = new localstorage()
+    ls.setItem(
+      'tinybird_events',
+      '[["2020-06-09 15:47:52","2020-06-09 15:47:52","main","37b60067-9209-40de-8b59-09459981446b","http://localhost/","Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/16.2.2","click","https://ui.tinybird.co","sign up","hello@hey.com","","","",""]]'
+    )
+
+    let w = {
+      document: {
+        currentScript: {
+          src: 'https://cdn.tinybird.co/static/js/t.js?t=the_token'
+        }
+      },
+      addEventListener: jest.fn(),
+      localStorage: ls
+    }
+
+    fetch.mockImplementation((url,formData) => {
+      const csv = formData.body.get('csv')
+      const parts = csv.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+      expect(parts.length).toBe(14)
+
+      expect(parts[6]).toBe('\"click\"')
+      expect(parts[7]).toBe('\"https://ui.tinybird.co\"')
+      expect(parts[8]).toBe('\"sign up\"')
+      expect(parts[9]).toBe('\"hello@hey.com\"')
+      return Promise.resolve({})
+    })
+
+    tracker(w)
+
+    expect(fetch).not.toHaveBeenCalled()
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    expect(fetch).toHaveBeenCalled()
+
+    jest.clearAllTimers()
+  })
+
+  it('should retry 6 times more if the first fetch fails', async () => {
+    jest.useFakeTimers()
+    const ls = new localstorage()
+
+    let w = {
+      document: {
+        currentScript: {
+          src: 'https://cdn.tinybird.co/static/js/t.js?t=the_token'
+        }
+      },
+      addEventListener: jest.fn(),
+      localStorage: ls
+    }
+
+    w.tbt = [['pageload', 'https://tinybird.co', 'landing']]
+
+    fetch.mockImplementation((url,formData) => {
+      return Promise.resolve({})
+    })
+
+    tracker(w)
+    await flushPromises()
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    expect(fetch.mock.calls.length).toBe(6)
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    expect(fetch.mock.calls.length).toBe(7)
+
+    jest.advanceTimersByTime(2000)
+    await flushPromises()
+
+    expect(fetch.mock.calls.length).toBe(7)
 
     jest.clearAllTimers()
   })

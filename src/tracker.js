@@ -116,7 +116,7 @@ var tracker = (function (w) {
 
     // If the event is pageload, don't wait to the flush
     if(argsArray[0] === 'pageload') {
-      uploadEvents()
+      uploadEvents(MAX_RETRIES)
     }
   }
 
