@@ -228,7 +228,7 @@ var tracker = (function (w) {
   }
 
   function getParameterByName(name, url) {
-    if (!url) url = w.document.currentScript && w.document.currentScript.src || '';
+    if (!url) url = w.document.currentScript.src || '';
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
         results = regex.exec(url);
