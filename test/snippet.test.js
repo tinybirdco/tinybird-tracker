@@ -45,8 +45,8 @@ function generateDefaultDOM(functionName, token, accountName, dataSourceName, ho
   `
 }
 
-describe('Tracker in DOM', () => {
-  it('should append the tracker script properly', (done) => {
+describe('Snippet', () => {
+  it('should append the tracker script properly', done => {
     const { window } = new JSDOM(
       generateDefaultDOM('tbt', 'aaaaaaaa'), {
         runScripts: 'dangerously'
@@ -63,7 +63,7 @@ describe('Tracker in DOM', () => {
     done()
   })
 
-  it('should not include any query parameter not needed', (done) => {
+  it('should not include any query parameter not needed', done => {
     const { window: { document } } = new JSDOM(
       generateDefaultDOM('tbt', 'aaaaaaaa'), {
         runScripts: 'dangerously'
