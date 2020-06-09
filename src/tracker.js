@@ -158,7 +158,7 @@ var tracker = (function () {
       if (arguments.length > 1) {
         items = Array.prototype.slice.call(arguments)
       } else {
-        items = item
+        items = [item]
       }
 
       parseItems(items)
