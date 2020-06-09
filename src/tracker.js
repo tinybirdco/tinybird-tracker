@@ -1,9 +1,13 @@
 import fetch from 'unfetch'
 
-var tracker = (function () {
+var tracker = (function (w) {
+  if (!w || !w.document.currentScript) {
+    return
+  }
+
   var TRACKER_COLUMNS = 14
   var COOKIE_NAME = '_track'
-  var LOCAL_STORAGE = this.localStorage
+  var LOCAL_STORAGE = w.localStorage
   var STORAGE_ITEM = 'tinybird_events'
   var DATASOURCE_NAME = 'tracker'
   var ACCOUNT_NAME = 'main'
@@ -37,7 +41,7 @@ var tracker = (function () {
     accountName = getParameterByName('a') || ACCOUNT_NAME
     functionName = getParameterByName('f') || DEFAULT_FUNCTION_NAME
     datasourceName = getParameterByName('d') || DATASOURCE_NAME
-    host = decodeURIComponent(getParameterByName('h')) || HOST
+    host = getParameterByName('h') && decodeURIComponent(getParameterByName('h')) || HOST
   }
 
   function uploadEvents(n) {
@@ -142,17 +146,17 @@ var tracker = (function () {
     uploadEvents()
   }
 
-  this.addEventListener('beforeunload', die)
-  this.addEventListener('unload', die, false)
+  w.addEventListener('beforeunload', die)
+  w.addEventListener('unload', die, false)
 
   // Initialize tracker
   init()
 
   // Parse first what tbt contains
-  parseItems(this[functionName])
+  parseItems(w[functionName])
 
   // Overwritte tbt.push function
-  this[functionName] = {
+  w[functionName] = {
     push: function (item) {
       var items
       if (arguments.length > 1) {
@@ -224,14 +228,16 @@ var tracker = (function () {
   }
 
   function getParameterByName(name, url) {
-    if (!url) url = document.currentScript && document.currentScript.src || '';
+    if (!url) url = w.document.currentScript && w.document.currentScript.src || '';
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
         results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
-})(window)
+  }
+})
+
+tracker(window)
 
 export default tracker
