@@ -33,11 +33,11 @@ var tracker = (function () {
       throw new Error('token is needed for sending events') 
     }
 
-    token = getParameterByName('t')
+    token = decodeURIComponent(getParameterByName('t'))
     accountName = getParameterByName('a') || ACCOUNT_NAME
     functionName = getParameterByName('f') || DEFAULT_FUNCTION_NAME
-    datasourceName = getParameterByName('da') || DATASOURCE_NAME
-    host = getParameterByName('h') || HOST
+    datasourceName = getParameterByName('d') || DATASOURCE_NAME
+    host = decodeURIComponent(getParameterByName('h')) || HOST
   }
 
   function uploadEvents(n) {

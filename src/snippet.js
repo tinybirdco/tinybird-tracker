@@ -1,3 +1,3 @@
-(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+d:'';
-w.async=true;w.src='/dist/tinybird-tracker.js?client=whatever&t='+b+fn+a+da+h;z.parentNode.insertBefore(w,z);
+(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+encodeURIComponent(d):'';
+w.async=true;w.src='/dist/tinybird-tracker.js?client=whatever&t='+encodeURI(b)+fn+a+da+h;z.parentNode.insertBefore(w,z);
 })(window, document, 'script', '{{functionName}}', '{{token}}', '{{accountName}}', '{{dataSourceName}}', '{{host}}')
