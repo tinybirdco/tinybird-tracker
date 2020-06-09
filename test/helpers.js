@@ -11,3 +11,5 @@ global.generateSnippet = (functionName, token, accountName, dataSourceName, host
     host
   })
 }
+
+global.flushPromises = () => new Promise(setImmediate)
