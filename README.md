@@ -34,27 +34,36 @@ You can change the names and types of the 'attr_' columns in the schema to fit y
 
 ## Instantiating the script
 
-You will need to create an append token with permissions just with write permissions for the tracker Datasource, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
+You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
 
 ```html
-<script src="https://cdn.tinybird.co/static/js/t.js?client=whatever"></script>
 <script>
-  tracker('{{tracker_append_token}}', 'main', '_tracker')
+<!-- AUTO-GENERATED-CONTENT:START (customTransform:src=https://cdn.tinybird.co/static/js/t.js&token=YOUR_TOKEN&functionName=tbt&accountName=main&dataSourceName=tracker&host=https://api.tinybird.co) - Do not remove -->
+(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+encodeURIComponent(d):'';
+w.async=true;w.src='https://cdn.tinybird.co/static/js/t.js?client=whatever&t='+encodeURI(b)+fn+a+da+h;z.parentNode.insertBefore(w,z);
+})(window, document, 'script', 'tbt', 'YOUR_TOKEN', 'main', 'tracker', 'https://api.tinybird.co')
+<!-- AUTO-GENERATED-CONTENT:END - Do not remove or modify this section -->
 </script>
 ```
 
 ## Issuing events
 
-Once the script is instantiated, you can call it by passing parameters to it. The following would be an example "page_load" that keeps track of the referrer as well as some other string (e.g. the nick for a specific landing page):
+If the `tbt` code is called after the container snippet, any variables declared within will not be available for the tracker to selectively fire events on page load. This is an example of storing an event of `pageload` which will be triggered once the script is loaded:
 
-```javascript
-_tracker('pageload', document.referrer, 'landing_page_1')
+```html
+<script>
+  window.tbt = window.tbt || []
+  tbt.push(['pageload', document.referrer, 'landing_page_1' ])
+</script>
+<!-- Tinybird Tracker -->
+...
+<!-- End Tinybird Tracker -->
 ```
 
 The following would be an example to trigger "onclick":
 
 ```javascript
-_tracker('click', document.referrer, 'landing_page_1', 'sign-up button')
+tbt.push(['click', document.referrer, 'landing_page_1', 'sign-up button'])
 ```
 
 

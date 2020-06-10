@@ -1,13 +1,29 @@
 <html>
-  <head></head>
-  <body>
-    <script src="../dist/tinybird-tracker.js"></script>
+  <head>
     <script>
-      // Init
-      tracker('p.eyJ1IjogIjdhYTRhZTBhLTVhODAtNGNkZi04ZTk4LTE4YTIzZTExZTllYSIsICJpZCI6ICI5YjJhZTlmMy03NjQyLTRhYTItYjQ1Mi0yZTcwOGUyNTU0MGIifQ.fuq4r4z2sx1o94fJbAtxauvLKdcWsBmP2S5HpWrqNGY', 'main', '_tracker', 'tracker', 'http://localhost:8001')
-      // Send event
-      _tracker('pageload', document.referrer, 'whatever', new Date().getTime())
+      window.tbt = window.tbt || []
+      tbt.push(['pageload', document.referrer, 'test_page_1' ])
     </script>
+
+    <script>
+      (function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+d:'';
+      w.async=true;w.src='/dist/tinybird-tracker.js?c=whatever&t='+b+fn+a+da+h;z.parentNode.insertBefore(w,z);
+      })(window, document, 'script', 'tbt', 'p.eyJ1IjogIjA5YTAzYTc2LTk2ZmYtNDg2MC1hNGFjLTFhZWFiYjA2YThjOSIsICJpZCI6ICJkMzU5YmIxMi1kM2FhLTRlZjQtOGNlNS04MjYzNDQwNGQyYzAifQ.hxK_345jSwnReJDAwZZ3g97vwW28uiFDoCRAOJqXMWM', 'main', 'tracker', 'http://localhost:8001')
+    </script>
+  </head>
+  <body>
     <h1>Hello world</h1>
+
+    <button onclick="tbt.push()">
+      no event
+    </button>
+    
+    <button onclick="tbt.push(['click', document.referrer, 'whatever'])">
+      single event
+    </button>
+
+    <button onclick="tbt.push(['click', document.referrer, 'whatever'], ['click', document.referrer, 'whatever 2'])">
+      multiple events
+    </button>
   </body>
 </html>
