@@ -7,6 +7,7 @@ global.generateSnippet = (functionName, token, accountName, dataSourceName, host
     functionName,
     token,
     accountName,
+    src: '/dist/tinybird-tracker.js',
     dataSourceName,
     host
   })
