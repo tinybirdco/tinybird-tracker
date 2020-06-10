@@ -38,9 +38,11 @@ You will need to create an append token with permissions just with write permiss
 
 ```html
 <script>
-(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+d:'';
-w.async=true;w.src='https://cdn.tinybird.co/static/js/t.js?c=whatever&t='+b+fn+a+da+h;z.parentNode.insertBefore(w,z);
-})(window, document, 'script', 'tbt', '{{tracker_append_token}}')
+<!-- AUTO-GENERATED-CONTENT:START (customTransform:src=https://cdn.tinybird.co/static/js/t.js&token=YOUR_TOKEN&functionName=tbt&accountName=main&dataSourceName=tracker&host=https://api.tinybird.co) - Do not remove -->
+(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+encodeURIComponent(d):'';
+w.async=true;w.src='https://cdn.tinybird.co/static/js/t.js?client=whatever&t='+encodeURI(b)+fn+a+da+h;z.parentNode.insertBefore(w,z);
+})(window, document, 'script', 'tbt', 'YOUR_TOKEN', 'main', 'tracker', 'https://api.tinybird.co')
+<!-- AUTO-GENERATED-CONTENT:END - Do not remove or modify this section -->
 </script>
 ```
 

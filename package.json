@@ -9,10 +9,11 @@
   "scripts": {
     "build": "npm run dev:build",
     "dev": "npm run dev:build",
-    "dev:build": "microbundle -f iife,es,umd --external=none",
-    "dev:watch": "microbundle -f iife,es,umd --external=none watch",
+    "dev:build": "microbundle -f iife --external=none",
+    "dev:watch": "microbundle -f iife --external=none watch",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "docs": "node scripts/generate-readme.js"
   },
   "author": "Tinybird team",
   "license": "MIT",
@@ -21,6 +22,7 @@
     "@babel/preset-env": "^7.10.2",
     "babel-jest": "^26.0.1",
     "jest": "^26.0.1",
+    "markdown-magic": "^1.0.0",
     "microbundle": "^0.12.0",
     "mustache": "^4.0.1",
     "unfetch": "^4.1.0"
