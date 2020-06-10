@@ -143,7 +143,7 @@ describe('Snippet', () => {
     expect(params.get('t')).toBe('1111')
     expect(params.get('f')).toBeNull()
     expect(params.get('a')).toBe('main')
-    expect(params.get('h')).toBe('https:&#x2F;&#x2F;ati.tinybird.co')
+    expect(params.get('h')).toBe('https://ati.tinybird.co')
     expect(params.get('d')).toBe('track_er')
     done()
   })
