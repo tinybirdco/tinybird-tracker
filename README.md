@@ -36,15 +36,17 @@ You can change the names and types of the 'attr_' columns in the schema to fit y
 
 You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
 
-```html
-<script>
 <!-- AUTO-GENERATED-CONTENT:START (customTransform:src=https://cdn.tinybird.co/static/js/t.js&token=YOUR_TOKEN&functionName=tbt&accountName=main&dataSourceName=tracker&host=https://api.tinybird.co) - Do not remove -->
-(function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+encodeURIComponent(d):'';
+
+      ```html
+      <script>
+        (function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+encodeURIComponent(d):'';
 w.async=true;w.src='https://cdn.tinybird.co/static/js/t.js?client=whatever&t='+encodeURI(b)+fn+a+da+h;z.parentNode.insertBefore(w,z);
 })(window, document, 'script', 'tbt', 'YOUR_TOKEN', 'main', 'tracker', 'https://api.tinybird.co')
+      </script>
+      ```
+      
 <!-- AUTO-GENERATED-CONTENT:END - Do not remove or modify this section -->
-</script>
-```
 
 ## Issuing events
 

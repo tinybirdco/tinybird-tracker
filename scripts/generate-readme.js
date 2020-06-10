@@ -8,14 +8,20 @@ const config = {
   transforms: {
     customTransform(content, options) {
       const snippetContent = fs.readFileSync('./src/snippet.js', 'utf8')
-      return Mustache.render(snippetContent, {
-        functionName: options.functionName,
-        token: options.token,
-        accountName: options.accountName,
-        src: options.src,
-        dataSourceName: options.dataSourceName,
-        host: options.host
-      })
+      return `
+      \`\`\`html
+      <script>
+        ${Mustache.render(snippetContent, {
+          functionName: options.functionName,
+          token: options.token,
+          accountName: options.accountName,
+          src: options.src,
+          dataSourceName: options.dataSourceName,
+          host: options.host
+        })}
+      </script>
+      \`\`\`
+      `
     }
   }
 }
