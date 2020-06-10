@@ -34,7 +34,7 @@ You can change the names and types of the 'attr_' columns in the schema to fit y
 
 ## Instantiating the script
 
-You will need to create an append token with permissions just with write permissions for the tracker Datasource, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
+You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
 
 ```html
 <script>
