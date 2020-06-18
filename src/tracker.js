@@ -60,7 +60,8 @@ var tracker = (function (w) {
       
       var url = host +
         '/v0/datasources?mode=append&name=' + datasourceName +
-        '&token=' + token
+        '&token=' + token  +
+        '&dialect_escapechar=' + encodeURIComponent(',')
       var formData = new FormData()
       formData.append('csv', rowsToCSV(events))
 
@@ -107,7 +108,7 @@ var tracker = (function (w) {
       accountName,
       userCookie,
       document.location.href,
-      navigator.userAgent
+      "Mozilla/5.0 (Linux; Android 9; SM-A505GT Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.157 Mobile Safari/537.36 Instagram 93.1.0.19.102 Android (28/9; 420dpi; 1080x2218; samsung; SM-A505GT; a50; exynos9610; pt_BR; 154400383)"
     ].concat(argsArray)
     if (ev.length < TRACKER_COLUMNS) {
       ev = ev.concat(Array(TRACKER_COLUMNS - ev.length).fill(''))
