@@ -108,7 +108,7 @@ describe('Tracker', () => {
     tracker(w)
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://api.tinybird.co/v0/datasources?mode=append&name=tracker&token=the_token',
+      'https://api.tinybird.co/v0/datasources?mode=append&name=tracker&token=the_token&dialect_delimiter=%2C',
       {
         body: jasmine.any(FormData),
         method: 'POST'
@@ -152,7 +152,13 @@ describe('Tracker', () => {
     jest.advanceTimersByTime(2000)
     await flushPromises()
 
-    expect(fetch).toHaveBeenCalled()
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.tinybird.co/v0/datasources?mode=append&name=tracker&token=the_token&dialect_delimiter=%2C',
+      {
+        body: jasmine.any(FormData),
+        method: 'POST'
+      }
+    )
 
     jest.clearAllTimers()
   })
@@ -243,7 +249,13 @@ describe('Tracker', () => {
     jest.advanceTimersByTime(2000)
     await flushPromises()
 
-    expect(fetch).toHaveBeenCalled()
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.tinybird.co/v0/datasources?mode=append&name=tracker&token=the_token&dialect_delimiter=%2C',
+      {
+        body: jasmine.any(FormData),
+        method: 'POST'
+      }
+    )
 
     jest.clearAllTimers()
   })

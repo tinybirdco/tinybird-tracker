@@ -60,7 +60,8 @@ var tracker = (function (w) {
       
       var url = host +
         '/v0/datasources?mode=append&name=' + datasourceName +
-        '&token=' + token
+        '&token=' + token  +
+        '&dialect_delimiter=' + encodeURIComponent(',')
       var formData = new FormData()
       formData.append('csv', rowsToCSV(events))
 
