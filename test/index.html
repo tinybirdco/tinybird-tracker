@@ -1,29 +1,16 @@
 <html>
   <head>
-    <script>
-      window.tbt = window.tbt || []
-      tbt.push(['pageload', document.referrer, 'test_page_1' ])
-    </script>
-
-    <script>
-      (function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+d:'';
-      w.async=true;w.src='/dist/tinybird-tracker.js?c=whatever&t='+b+fn+a+da+h;z.parentNode.insertBefore(w,z);
-      })(window, document, 'script', 'tbt', 'p.eyJ1IjogIjQ1NjRkZjRhLWQwOTAtNGViZi05YmRiLTZhMDFmOWM0ODkxYSIsICJpZCI6ICI4ZmVhZjI1YS1hMmYxLTRiMDMtYThjYS1kODFhNDc2NmY4Y2EifQ.6r6bdr03GNlWeyeCnLDOXo1myoD3kP_Eg_5NFnmrTIs', 'main', 'tracker', 'http://localhost:8001')
-    </script>
+    <script data-api="https://api.tinybird.co" data-token="p.eyJ1IjogIjE3YjNkMDUzLTNkMjUtNDczNS1hNGUzLTczOTg5YTkyM2M2OCIsICJpZCI6ICIwYWEyOGViNS0zYWJkLTQxNTEtODQyYS1iZGMwMzAzYzcwMjUifQ.dsgIM37qEy-VaMsScud9rNvG_aIQkiA85ZhB8kEHNIk" data-source="events" src="../dist/tinybird-tracker.js"></script>
   </head>
   <body>
     <h1>Hello world</h1>
 
-    <button onclick="tbt.push()">
+    <button onclick="tinybird()">
       no event
     </button>
     
-    <button onclick="tbt.push(['click', document.referrer, 'whatever'])">
+    <button onclick="tinybird('click', { referrer: document.referrer, hey: 'whatever' })">
       single event
-    </button>
-
-    <button onclick="tbt.push(['click', document.referrer, 'whatever'], ['click', document.referrer, 'whatever 2'])">
-      multiple events
     </button>
   </body>
 </html>
