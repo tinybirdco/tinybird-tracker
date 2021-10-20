@@ -115,7 +115,7 @@ describe('Tracker', () => {
     })
   })
 
-  it('should parse those events already included', () => {
+  it('should parse those events already included', async done => {
     let w = {
       document: {
         cookie: 'coooooookie',
@@ -151,6 +151,8 @@ describe('Tracker', () => {
 
     tracker(w)
 
+    await flushPromises()
+
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=events&token=token',
       {
@@ -158,9 +160,11 @@ describe('Tracker', () => {
         method: 'POST'
       }
     )
+
+    done()
   })
 
-  it('should send a new event after 2secs', () => {
+  it('should send a new event after 2secs', async done => {
     jest.useFakeTimers()
 
     let a = {
@@ -210,6 +214,8 @@ describe('Tracker', () => {
 
     jest.advanceTimersByTime(2000)
 
+    await flushPromises()
+
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
       {
@@ -219,9 +225,11 @@ describe('Tracker', () => {
     )
 
     jest.clearAllTimers()
+
+    done()
   })
 
-  it('should send pending localStorage events after 2sec', () => {
+  it('should send pending localStorage events after 2sec', async done => {
     jest.useFakeTimers()
 
     const ls = new localstorage()
@@ -269,6 +277,8 @@ describe('Tracker', () => {
 
     jest.advanceTimersByTime(2000)
 
+    await flushPromises()
+
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
       {
@@ -278,12 +288,14 @@ describe('Tracker', () => {
     )
 
     jest.clearAllTimers()
+
+    done()
   })
 
-  it('should retry 6 times more if the first fetch failed', async () => {
+  it('should retry 6 times more if the first fetch failed', async done => {
     jest.useFakeTimers()
-    const ls = new localstorage()
 
+    const ls = new localstorage()
     let w = {
       document: {
         cookie: 'coooooookie',
@@ -339,5 +351,7 @@ describe('Tracker', () => {
     expect(fetch.mock.calls.length).toBe(7)
 
     jest.clearAllTimers()
+
+    done()
   })
 })
