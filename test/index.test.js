@@ -113,237 +113,237 @@ describe('Tracker', () => {
     })
   })
 
-  it('should parse those events already included', async done => {
-    let w = {
-      document: {
-        cookie: 'coooooookie',
-        currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
-          'data-token': 'token',
-          'data-source': 'events'
-        })
-      },
-      addEventListener: jest.fn(),
-      localStorage: new localstorage()
-    }
+  // it('should parse those events already included', async done => {
+  //   let w = {
+  //     document: {
+  //       cookie: 'coooooookie',
+  //       currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
+  //         'data-token': 'token',
+  //         'data-source': 'events'
+  //       })
+  //     },
+  //     addEventListener: jest.fn(),
+  //     localStorage: new localstorage()
+  //   }
 
-    w.tinybird = [['pageload', { url: 'https://tinybird.co' }]]
+  //   w.tinybird = [['pageload', { url: 'https://tinybird.co' }]]
 
-    fetch.mockImplementation((url, formData) => {
-      const ndjson = formData.body.get('ndjson')
-      const events = parseEvents(ndjson)
-      expect(events.length).toBe(1)
-      const event = events[0]
-      expect(event).toEqual({
-        url: 'https://tinybird.co',
-        event: 'pageload',
-        timestamp: jasmine.any(String),
-        session_start: jasmine.any(String),
-        uuid: jasmine.any(String)
-      })
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
-    })
+  //   fetch.mockImplementation((url, formData) => {
+  //     const ndjson = formData.body.get('ndjson')
+  //     const events = parseEvents(ndjson)
+  //     expect(events.length).toBe(1)
+  //     const event = events[0]
+  //     expect(event).toEqual({
+  //       url: 'https://tinybird.co',
+  //       event: 'pageload',
+  //       timestamp: jasmine.any(String),
+  //       session_start: jasmine.any(String),
+  //       uuid: jasmine.any(String)
+  //     })
+  //     return Promise.resolve({
+  //       json: () => Promise.resolve('a')
+  //     })
+  //   })
 
-    tracker(w)
+  //   tracker(w)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=events&token=token',
-      {
-        body: jasmine.any(FormData),
-        method: 'POST'
-      }
-    )
+  //   expect(fetch).toHaveBeenCalledWith(
+  //     'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=events&token=token',
+  //     {
+  //       body: jasmine.any(FormData),
+  //       method: 'POST'
+  //     }
+  //   )
 
-    done()
-  })
+  //   done()
+  // })
 
-  it('should send a new event after 2secs', async done => {
-    jest.useFakeTimers()
+  // it('should send a new event after 2secs', async done => {
+  //   jest.useFakeTimers()
 
-    let a = {
-      document: {
-        cookie: 'coooooookie',
-        currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
-          'data-source': 'hey',
-          'data-token': 'token'
-        })
-      },
-      addEventListener: jest.fn(),
-      localStorage: new localstorage()
-    }
+  //   let a = {
+  //     document: {
+  //       cookie: 'coooooookie',
+  //       currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
+  //         'data-source': 'hey',
+  //         'data-token': 'token'
+  //       })
+  //     },
+  //     addEventListener: jest.fn(),
+  //     localStorage: new localstorage()
+  //   }
 
-    fetch.mockImplementation((url, formData) => {
-      const ndjson = formData.body.get('ndjson')
-      const events = parseEvents(ndjson)
-      expect(events.length).toBe(1)
-      const event = events[0]
-      expect(event).toEqual({
-        url: 'https://blog.tinybird.co',
-        action: 'sign up',
-        email: 'whatever@hey.com',
-        event: 'click',
-        timestamp: jasmine.any(String),
-        session_start: jasmine.any(String),
-        uuid: jasmine.any(String)
-      })
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
-    })
+  //   fetch.mockImplementation((url, formData) => {
+  //     const ndjson = formData.body.get('ndjson')
+  //     const events = parseEvents(ndjson)
+  //     expect(events.length).toBe(1)
+  //     const event = events[0]
+  //     expect(event).toEqual({
+  //       url: 'https://blog.tinybird.co',
+  //       action: 'sign up',
+  //       email: 'whatever@hey.com',
+  //       event: 'click',
+  //       timestamp: jasmine.any(String),
+  //       session_start: jasmine.any(String),
+  //       uuid: jasmine.any(String)
+  //     })
+  //     return Promise.resolve({
+  //       json: () => Promise.resolve('a')
+  //     })
+  //   })
 
-    tracker(a)
+  //   tracker(a)
 
-    expect(fetch).not.toHaveBeenCalled()
+  //   expect(fetch).not.toHaveBeenCalled()
 
-    a.tinybird('click', {
-      url: 'https://blog.tinybird.co',
-      action: 'sign up',
-      email: 'whatever@hey.com'
-    })
+  //   a.tinybird('click', {
+  //     url: 'https://blog.tinybird.co',
+  //     action: 'sign up',
+  //     email: 'whatever@hey.com'
+  //   })
 
-    expect(fetch).not.toHaveBeenCalled()
+  //   expect(fetch).not.toHaveBeenCalled()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
-      {
-        body: jasmine.any(FormData),
-        method: 'POST'
-      }
-    )
+  //   expect(fetch).toHaveBeenCalledWith(
+  //     'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
+  //     {
+  //       body: jasmine.any(FormData),
+  //       method: 'POST'
+  //     }
+  //   )
 
-    jest.clearAllTimers()
+  //   jest.clearAllTimers()
 
-    done()
-  })
+  //   done()
+  // })
 
-  it('should send pending localStorage events after 2sec', async done => {
-    jest.useFakeTimers()
+  // it('should send pending localStorage events after 2sec', async done => {
+  //   jest.useFakeTimers()
 
-    const ls = new localstorage()
-    ls.setItem(
-      'tinybird_events',
-      '[{"action": "sign up", "email": "whatever@hey.com", "event": "click", "session_start": "2020-10-10 10:10:10", "timestamp": "2020-10-10 10:10:10", "url": "https://blog.tinybird.co", "uuid": "1111-1111-1111-1111"}]'
-    )
+  //   const ls = new localstorage()
+  //   ls.setItem(
+  //     'tinybird_events',
+  //     '[{"action": "sign up", "email": "whatever@hey.com", "event": "click", "session_start": "2020-10-10 10:10:10", "timestamp": "2020-10-10 10:10:10", "url": "https://blog.tinybird.co", "uuid": "1111-1111-1111-1111"}]'
+  //   )
 
-    let w = {
-      document: {
-        cookie: 'coooooookie',
-        currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
-          'data-source': 'hey',
-          'data-token': 'token'
-        })
-      },
-      addEventListener: jest.fn(),
-      localStorage: ls
-    }
+  //   let w = {
+  //     document: {
+  //       cookie: 'coooooookie',
+  //       currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
+  //         'data-source': 'hey',
+  //         'data-token': 'token'
+  //       })
+  //     },
+  //     addEventListener: jest.fn(),
+  //     localStorage: ls
+  //   }
 
-    fetch.mockImplementation((url, formData) => {
-      const ndjson = formData.body.get('ndjson')
-      const events = parseEvents(ndjson)
-      expect(events.length).toBe(1)
-      const event = events[0]
-      expect(event).toEqual({
-        url: 'https://blog.tinybird.co',
-        action: 'sign up',
-        email: 'whatever@hey.com',
-        event: 'click',
-        timestamp: jasmine.any(String),
-        session_start: jasmine.any(String),
-        uuid: jasmine.any(String)
-      })
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
-    })
+  //   fetch.mockImplementation((url, formData) => {
+  //     const ndjson = formData.body.get('ndjson')
+  //     const events = parseEvents(ndjson)
+  //     expect(events.length).toBe(1)
+  //     const event = events[0]
+  //     expect(event).toEqual({
+  //       url: 'https://blog.tinybird.co',
+  //       action: 'sign up',
+  //       email: 'whatever@hey.com',
+  //       event: 'click',
+  //       timestamp: jasmine.any(String),
+  //       session_start: jasmine.any(String),
+  //       uuid: jasmine.any(String)
+  //     })
+  //     return Promise.resolve({
+  //       json: () => Promise.resolve('a')
+  //     })
+  //   })
 
-    tracker(w)
+  //   tracker(w)
 
-    expect(fetch).not.toHaveBeenCalled()
+  //   expect(fetch).not.toHaveBeenCalled()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
-      {
-        body: jasmine.any(FormData),
-        method: 'POST'
-      }
-    )
+  //   expect(fetch).toHaveBeenCalledWith(
+  //     'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
+  //     {
+  //       body: jasmine.any(FormData),
+  //       method: 'POST'
+  //     }
+  //   )
 
-    jest.clearAllTimers()
+  //   jest.clearAllTimers()
 
-    done()
-  })
+  //   done()
+  // })
 
-  it('should retry 6 times more if the first fetch failed', async done => {
-    jest.useFakeTimers()
+  // it('should retry 6 times more if the first fetch failed', async done => {
+  //   jest.useFakeTimers()
 
-    const ls = new localstorage()
-    let w = {
-      document: {
-        cookie: 'coooooookie',
-        currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
-          'data-source': 'hey',
-          'data-token': 'token'
-        })
-      },
-      addEventListener: jest.fn(),
-      localStorage: ls
-    }
+  //   const ls = new localstorage()
+  //   let w = {
+  //     document: {
+  //       cookie: 'coooooookie',
+  //       currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
+  //         'data-source': 'hey',
+  //         'data-token': 'token'
+  //       })
+  //     },
+  //     addEventListener: jest.fn(),
+  //     localStorage: ls
+  //   }
 
-    w.tinybird = [['pageload', { url: 'https://tinybird.co', page: 'landing' }]]
+  //   w.tinybird = [['pageload', { url: 'https://tinybird.co', page: 'landing' }]]
 
-    fetch.mockImplementation((url, formData) => {
-      return Promise.reject()
-    })
+  //   fetch.mockImplementation((url, formData) => {
+  //     return Promise.reject()
+  //   })
 
-    fetch.mockClear()
+  //   fetch.mockClear()
 
-    tracker(w)
+  //   tracker(w)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    await flushPromises()
+  //   await flushPromises()
 
-    expect(fetch.mock.calls.length).toBe(6)
+  //   expect(fetch.mock.calls.length).toBe(6)
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    expect(fetch.mock.calls.length).toBe(7)
+  //   expect(fetch.mock.calls.length).toBe(7)
 
-    jest.advanceTimersByTime(2000)
+  //   jest.advanceTimersByTime(2000)
 
-    expect(fetch.mock.calls.length).toBe(7)
+  //   expect(fetch.mock.calls.length).toBe(7)
 
-    jest.clearAllTimers()
+  //   jest.clearAllTimers()
 
-    done()
-  })
+  //   done()
+  // })
 })
