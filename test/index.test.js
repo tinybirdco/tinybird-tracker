@@ -57,6 +57,8 @@ describe('Tracker', () => {
 
   describe('initialization', () => {
     it('should init properly', () => {
+      jest.useFakeTimers()
+
       let w = {
         document: {
           cookie: 'coooooookie',
@@ -74,8 +76,12 @@ describe('Tracker', () => {
 
       tracker(w)
 
+      jest.advanceTimersByTime(2000)
+
       expect(w.tinybird).toBeDefined()
       expect(w.tinybird).toEqual(jasmine.any(Function))
+
+      jest.clearAllTimers()
     })
 
     //   it('should not initialize without a Data Source', () => {
