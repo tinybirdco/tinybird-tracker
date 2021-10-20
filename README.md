@@ -64,11 +64,21 @@ This is an example of storing an event of `pageload` which will be triggered onc
 The following would be an example to trigger "onclick":
 
 ```javascript
-tbt.push('click', { 
+tinybird('click', { 
   referrer: document.referrer,
   page: 'landing_page_1',
   place: 'sign-up button'
 })
 ```
 
+If you want to initialize the `tinybird` object with events before the script is loaded and ready, you can add as many tuple events as in an Array:
+
+```html
+<script>
+  window.tinybird = [
+    ['event_name', { hey: 'hello' }],
+    ['click', { place: 'image' }]
+  ]
+</script>
+```
 
