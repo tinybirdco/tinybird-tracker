@@ -40,6 +40,8 @@ describe('Tracker', () => {
   }
 
   beforeEach(() => {
+    jest.useFakeTimers()
+
     fetch.mockImplementation(() => {
       return Promise.resolve({
         json: () => Promise.resolve('a')
@@ -49,6 +51,7 @@ describe('Tracker', () => {
 
   afterEach(() => {
     fetch.mockClear()
+    jest.clearAllTimers()
   })
 
   it('should be truthy', () => {
@@ -57,8 +60,6 @@ describe('Tracker', () => {
 
   describe('initialization', () => {
     it('should init properly', () => {
-      jest.useFakeTimers()
-
       let w = {
         document: {
           cookie: 'coooooookie',
@@ -80,47 +81,45 @@ describe('Tracker', () => {
 
       expect(w.tinybird).toBeDefined()
       expect(w.tinybird).toEqual(jasmine.any(Function))
-
-      jest.clearAllTimers()
     })
 
-    //   it('should not initialize without a Data Source', () => {
-    //     let w = {
-    //       document: {
-    //         cookie: 'coooooookie',
-    //         currentScript: new CurrentScript(
-    //           'https://cdn.tinybird.co/static/js/t.js',
-    //           {
-    //             'data-token': 'hey'
-    //           }
-    //         )
-    //       },
-    //       addEventListener: jest.fn(),
-    //       localStorage: new localstorage()
-    //     }
-    //     expect(() => {
-    //       tracker(w)
-    //     }).toThrow("'dataSource' name is required to start sending events")
-    //   })
+    it('should not initialize without a Data Source', () => {
+      let w = {
+        document: {
+          cookie: 'coooooookie',
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-token': 'hey'
+            }
+          )
+        },
+        addEventListener: jest.fn(),
+        localStorage: new localstorage()
+      }
+      expect(() => {
+        tracker(w)
+      }).toThrow("'dataSource' name is required to start sending events")
+    })
 
-    //   it('should not initialize without a token', () => {
-    //     let w = {
-    //       document: {
-    //         cookie: 'coooooookie',
-    //         currentScript: new CurrentScript(
-    //           'https://cdn.tinybird.co/static/js/t.js',
-    //           {
-    //             'data-source': 'hey'
-    //           }
-    //         )
-    //       },
-    //       addEventListener: jest.fn(),
-    //       localStorage: new localstorage()
-    //     }
-    //     expect(() => {
-    //       tracker(w)
-    //     }).toThrow("'token' is required to start sending events")
-    //   })
+    it('should not initialize without a token', () => {
+      let w = {
+        document: {
+          cookie: 'coooooookie',
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey'
+            }
+          )
+        },
+        addEventListener: jest.fn(),
+        localStorage: new localstorage()
+      }
+      expect(() => {
+        tracker(w)
+      }).toThrow("'token' is required to start sending events")
+    })
   })
 
   // it('should parse those events already included', async done => {
