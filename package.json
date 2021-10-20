@@ -12,7 +12,7 @@
     "dev:build": "microbundle -f iife --external=none",
     "dev:watch": "microbundle -f iife --external=none watch",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch --detectOpenHandles"
   },
   "author": "Tinybird team",
   "license": "MIT",

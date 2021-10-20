@@ -42,9 +42,7 @@ describe('Tracker', () => {
   beforeEach(() => {
     fetch.mockImplementation(() => {
       return Promise.resolve({
-        json: () => {
-          return 'a'
-        }
+        json: () => Promise.resolve('a')
       })
     })
   })
@@ -143,9 +141,7 @@ describe('Tracker', () => {
         uuid: jasmine.any(String)
       })
       return Promise.resolve({
-        json: () => {
-          return 'a'
-        }
+        json: () => Promise.resolve('a')
       })
     })
 
@@ -194,9 +190,7 @@ describe('Tracker', () => {
         uuid: jasmine.any(String)
       })
       return Promise.resolve({
-        json: () => {
-          return 'a'
-        }
+        json: () => Promise.resolve('a')
       })
     })
 
@@ -265,9 +259,7 @@ describe('Tracker', () => {
         uuid: jasmine.any(String)
       })
       return Promise.resolve({
-        json: () => {
-          return 'a'
-        }
+        json: () => Promise.resolve('a')
       })
     })
 
