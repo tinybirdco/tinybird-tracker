@@ -1,69 +1,74 @@
 # Tinybird-tracker
 
-A simple tracker in javascript to upload events directly from the browser to Tinybird.
+A simple tracker in JavaScript to upload events directly from the browser to Tinybird.
 
 # How it works
 
-The tracker helps you record events in your HTML page and stores them in a Data Source within your Tinybird account. You can then explore this data in Real-time through Tinybird's SQL pipes and endpoints.
+The tracker helps you record events in your HTML page and stores them in a Data Source within your Tinybird account. You can then explore this data in realtime through Tinybird's SQL pipes and endpoints.
 
 By default, the tracker stores along every event basic fields like:
 
 * `timestamp (DateTime)` of the event
-* `session_start (Datetime)` when the tracker is instantiated on a page
-* `account_name (String)` with a name that can be passed on instantiation to better split events
-* `user_id (String)`. An automatically generated uuid to track a given user through different pages. This ID is the only thing stored in a cookie
-* `location (String)`. The URL of the page where the event takes place.
-* `user_agent (String)`. The user_agent information for the particular browser
+* `session_start (Datetime)` when the tracker was instantiated on a page
+* `event (String)` with a name that can be passed on instantiation to better split events
+* `uuid (String)`. An automatically generated uuid to track a given user through different pages. This ID is the only thing stored in a cookie
 
-Additionally, as part of every event, you can pass along up to 8 additional attributes that will be stored in subsequent columns.
+Additionally, as part of every event, you can pass along any attribe in JSON format.
 
 # Getting Started
 
 ## Create the Data source in Tinybird.
 
-The tracker works by default with a 14 column data source called 'tracker'. It can be created with the following command:
+You need a Data Source created with a NDJSON schema (remember to choose a Data Source name). It can be created with the following command:
 
 ```shell
 curl \
 -H "Authorization: Bearer <DATASOURCES:CREATE token>" \
--X POST "https://api.tinybird.co/v0/datasources?name=tracker&mode=create" \
--d "schema=timestamp DateTime,session_start DateTime,account_name String,user_id String,location String,user_agent String,attr_0 String,attr_1 String,attr_2 String,attr_3 String,attr_4 String, attr_5 String, attr_6 String, attr_7 String"
+-X POST -G -d 'mode=create' -d 'format=ndjson' -d 'name=events' --data-urlencode 'schema=timestamp DateTime `json:$.timestamp`, event String `json:$.event`, session_start String `json:$.session_start`, uuid String `json:$.uuid`' https://api.tinybird.co/v0/datasources
 ```
 
-You can change the names and types of the 'attr_' columns in the schema to fit your needs. When issuing events, you are responsible to ensure those fields are used consitently.
+You can change the names and types of the columns in the schema to fit your needs. When issuing events, you can send as many attributes as you want, no matter if there isn't an specific column for them.
 
 ## Instantiating the script
 
-You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation, along side the account name you wish to use, the private variable name to use for the tracker and the Tinybird API HOST (which may vary for your account):
+You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation:
 
-<!-- AUTO-GENERATED-CONTENT:START (customTransform:src=https://cdn.tinybird.co/static/js/t.js&token=YOUR_TOKEN&functionName=tbt&accountName=main&dataSourceName=tracker&host=https://api.tinybird.co) - Do not remove -->
 ```html
-<script>
-  (function(t,i0,n,y,b,i1,r,d){t[y]=t[y]||[];var z=i0.getElementsByTagName(n)[0],w=i0.createElement(n),fn=y!='tbt'?'&f='+y:'',a=!!i1?'&a='+i1:'',da=!!r?'&d='+r:'',h=!!d?'&h='+encodeURIComponent(d):'';
-w.async=true;w.src='https://cdn.tinybird.co/static/js/t.js?client=whatever&t='+encodeURI(b)+fn+a+da+h;z.parentNode.insertBefore(w,z);
-})(window, document, 'script', 'tbt', 'YOUR_TOKEN', 'main', 'tracker', 'https://api.tinybird.co')
-</script>
+<script data-token="YOUR_TOKEN" data-source="events" src="https://cdn.tinybird.co/static/js/t.js"></script>
 ```
-<!-- AUTO-GENERATED-CONTENT:END - Do not remove or modify this section -->
+
+Here it is the list of available options for the script:
+
+| Name          | Default value             | Description |
+| ------------- | ------------------------- | ------------- |
+| token         |                           | Token write permissions over the Data Source |
+| source        |                           | Data Source name in Tinybird |
+| api           | https://api.tinybird.co   | API URL origin. Optional |
+
+In order to use them, add them as data attributes (`data-xxxx`) in the script instantation.
+
 
 ## Issuing events
 
-If the `tbt` code is called after the container snippet, any variables declared within will not be available for the tracker to selectively fire events on page load. This is an example of storing an event of `pageload` which will be triggered once the script is loaded:
+Once the script is loaded in the DOM, you can start sending events with the `tinybird` object.
+It accepts two parameters, the first one is the event name, and the second one, the rest of the attributes you want to stre.
+
+This is an example of storing an event of `pageload` which will be triggered once the script is loaded:
 
 ```html
 <script>
-  window.tbt = window.tbt || []
-  tbt.push(['pageload', document.referrer, 'landing_page_1' ])
+  tinybird('pageload', { referrer: document.referrer, page: 'landing_page_1' })
 </script>
-<!-- Tinybird Tracker -->
-...
-<!-- End Tinybird Tracker -->
 ```
 
 The following would be an example to trigger "onclick":
 
 ```javascript
-tbt.push(['click', document.referrer, 'landing_page_1', 'sign-up button'])
+tbt.push('click', { 
+  referrer: document.referrer,
+  page: 'landing_page_1',
+  place: 'sign-up button'
+})
 ```
 
 
