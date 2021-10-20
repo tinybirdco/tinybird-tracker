@@ -39,11 +39,11 @@ You will need to create an append token with permissions just with write permiss
 
 Here it is the list of available options for the script:
 
-| Name          | Default value             | Description |
-| ------------- | ------------------------- | ------------- |
-| token         |                           | Token write permissions over the Data Source |
-| source        |                           | Data Source name in Tinybird |
-| api           | https://api.tinybird.co   | API URL origin. Optional |
+| Name  | Default value | Description | Required |
+| ------------- | ------------- | ------------- | ------------- |
+| token  |  | Token write permissions over the Data Source | yes |
+| source  |  | Data Source name in Tinybird | yes |
+| api | https://api.tinybird.co | API URL origin | no |
 
 In order to use them, add them as data attributes (`data-xxxx`) in the script instantation.
 
