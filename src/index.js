@@ -3,14 +3,13 @@ import fetch from 'unfetch'
 var tracker = function (w) {
   var doc = w.document
   var storage = w.localStorage
-  var currentScript = doc.currentScript
 
-  if (!w || !currentScript) {
+  if (!w || !w.document || !w.document.currentScript) {
     return
   }
 
   var api =
-    (getParameterByName('api') || new URL(currentScript.src).origin) +
+    (getParameterByName('api') || new URL(doc.currentScript.src).origin) +
     '/v0/datasources'
   var dataSource = getParameterByName('source')
   var token = getParameterByName('token')
@@ -70,7 +69,7 @@ var tracker = function (w) {
           }
           uploading = false
         })
-        .catch(function () {
+        .catch(function (e) {
           onError()
         })
     } else {
@@ -108,7 +107,11 @@ var tracker = function (w) {
   w.addEventListener('unload', die, false)
 
   // Overwritte tinybird function
+  var queue = w.tinybird || []
   w.tinybird = addEvent
+  for (var i = 0; i < queue.length; i++) {
+    addEvent.apply(this, queue[i])
+  }
 
   // Start upload
   delayUpload(TIMEOUT, MAX_RETRIES)
@@ -136,12 +139,12 @@ var tracker = function (w) {
   }
 
   function setCookie(name, value) {
-    document.cookie = name + '=' + (value || '') + '; path=/'
+    w.document.cookie = name + '=' + (value || '') + '; path=/'
   }
 
   function getCookie(name) {
     var nameEQ = name + '='
-    var ca = document.cookie.split(';')
+    var ca = w.document.cookie.split(';')
     for (var i = 0; i < ca.length; ++i) {
       var c = ca[i]
       while (c.charAt(0) === ' ') {
@@ -155,7 +158,7 @@ var tracker = function (w) {
   }
 
   function getParameterByName(name) {
-    return currentScript.getAttribute('data-' + name)
+    return doc.currentScript.getAttribute('data-' + name)
   }
 }
 
