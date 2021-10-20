@@ -1,8 +1,8 @@
-# Tinybird-tracker
+# tinybird-tracker
 
-A simple tracker in JavaScript to upload events directly from the browser to Tinybird.
+A simple tracker in JavaScript to upload events directly from the browser to [Tinybird](https://www.tinybird.co).
 
-# How it works
+## How it works
 
 The tracker helps you record events in your HTML page and stores them in a Data Source within your Tinybird account. You can then explore this data in realtime through Tinybird's SQL pipes and endpoints.
 
@@ -15,9 +15,9 @@ By default, the tracker stores along every event basic fields like:
 
 Additionally, as part of every event, you can pass along any attribe in JSON format.
 
-# Getting Started
+## Getting Started
 
-## Create the Data source in Tinybird.
+### Create the Data source in Tinybird.
 
 You need a Data Source created with a NDJSON schema (remember to choose a Data Source name). It can be created with the following command:
 
@@ -29,7 +29,7 @@ curl \
 
 You can change the names and types of the columns in the schema to fit your needs. When issuing events, you can send as many attributes as you want, no matter if there isn't an specific column for them.
 
-## Instantiating the script
+### Instantiating the script
 
 You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation:
 
@@ -48,7 +48,7 @@ Here it is the list of available options for the script:
 In order to use them, add them as data attributes (`data-xxxx`) in the script instantation.
 
 
-## Issuing events
+### Issuing events
 
 Once the script is loaded in the DOM, you can start sending events with the `tinybird` object.
 It accepts two parameters, the first one is the event name, and the second one, the rest of the attributes you want to stre.
