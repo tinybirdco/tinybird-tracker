@@ -8,7 +8,7 @@ var tracker = function (w) {
     return
   }
 
-  var api =
+  var apiUrl =
     (getParameterByName('api') || new URL(doc.currentScript.src).origin) +
     '/v0/datasources'
   var dataSource = getParameterByName('source')
@@ -48,7 +48,7 @@ var tracker = function (w) {
       uploading = true
 
       var url =
-        api + '?format=ndjson&mode=append&name=' + dataSource + '&token=' + token
+        apiUrl + '?format=ndjson&mode=append&name=' + dataSource + '&token=' + token
       var formData = new FormData()
       formData.append('ndjson', rowsToNDJSON(events))
 
