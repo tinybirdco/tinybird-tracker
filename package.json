@@ -1,8 +1,8 @@
 {
   "name": "tinybird-tracker.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Tinybird tracker",
-  "source": "src/tracker.js",
+  "source": "src/index.js",
   "main": "dist/tinybird-tracker.js",
   "module": "dist/tinybird-tracker.m.js",
   "unpkg": "dist/tinybird-tracker.umd.js",
@@ -12,20 +12,17 @@
     "dev:build": "microbundle -f iife --external=none",
     "dev:watch": "microbundle -f iife --external=none watch",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "docs": "node scripts/generate-readme.js"
+    "test:watch": "jest --watch --detectOpenHandles"
   },
   "author": "Tinybird team",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/preset-env": "^7.10.2",
-    "babel-jest": "^26.0.1",
-    "jest": "^26.0.1",
-    "markdown-magic": "^1.0.0",
-    "microbundle": "^0.12.0",
-    "mustache": "^4.0.1",
-    "unfetch": "^4.1.0"
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "babel-jest": "^27.3.1",
+    "jest": "^27.3.1",
+    "microbundle": "^0.14.1",
+    "unfetch": "^4.2.0"
   },
   "engines": {
     "node": ">=12.14.1"
@@ -43,8 +40,12 @@
     "operational"
   ],
   "jest": {
+    "testRunner": "jest-jasmine2",
     "setupFiles": [
       "<rootDir>/test/helpers.js"
-    ]
+    ],
+    "globals": {
+      "window": {}
+    }
   }
 }
