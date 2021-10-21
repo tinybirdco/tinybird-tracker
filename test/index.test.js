@@ -77,7 +77,7 @@ describe('Tracker', () => {
 
       tracker(w)
 
-      jest.advanceTimersByTime(2000)
+      jest.advanceTimersByTime(5000)
 
       expect(w.tinybird).toBeDefined()
       expect(w.tinybird).toEqual(jasmine.any(Function))
@@ -156,6 +156,8 @@ describe('Tracker', () => {
 
     tracker(w)
 
+    jest.advanceTimersByTime(5000)
+
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
@@ -213,7 +215,7 @@ describe('Tracker', () => {
 
     expect(fetch).not.toHaveBeenCalled()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
@@ -270,7 +272,7 @@ describe('Tracker', () => {
 
     expect(fetch).not.toHaveBeenCalled()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
@@ -311,35 +313,39 @@ describe('Tracker', () => {
 
     await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
+
+    await flushPromises()
+
+    jest.advanceTimersByTime(5000)
 
     await flushPromises()
 
     expect(fetch.mock.calls.length).toBe(6)
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
-    expect(fetch.mock.calls.length).toBe(7)
+    expect(fetch.mock.calls.length).toBe(6)
 
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(5000)
 
-    expect(fetch.mock.calls.length).toBe(7)
+    expect(fetch.mock.calls.length).toBe(6)
 
     done()
   })

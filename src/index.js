@@ -21,7 +21,7 @@ var tracker = function (w) {
   var COOKIE_NAME = 'tinybird'
   var STORAGE_ITEM = 'tinybird_events'
   var MAX_RETRIES = 5
-  var TIMEOUT = 2000
+  var TIMEOUT = 5000
 
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(storage.getItem(STORAGE_ITEM) || '[]')
