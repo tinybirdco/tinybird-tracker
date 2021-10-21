@@ -91,11 +91,6 @@ var tracker = function (w) {
     ev['uuid'] = userCookie
 
     events.push(ev)
-
-    // If the event is pageload, don't wait to the flush
-    if (eventName === 'pageload') {
-      uploadEvents(MAX_RETRIES)
-    }
   }
 
   function die() {
