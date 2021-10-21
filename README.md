@@ -1,4 +1,5 @@
-# tinybird-tracker
+# tinybird-tracker ![example workflow](https://github.com/tinybirdco/tinybird-tracker/actions/workflows/main.yml/badge.svg)
+
 
 A simple tracker in JavaScript to upload events directly from the browser to [Tinybird](https://www.tinybird.co).
 
