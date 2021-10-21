@@ -27,7 +27,7 @@ curl \
 -X POST -G -d 'mode=create' -d 'format=ndjson' -d 'name=events' --data-urlencode 'schema=timestamp DateTime `json:$.timestamp`, event String `json:$.event`, session_start String `json:$.session_start`, uuid String `json:$.uuid`' https://api.tinybird.co/v0/datasources
 ```
 
-You can change the names and types of the columns in the schema to fit your needs. When issuing events, you can send as many attributes as you want, no matter if there isn't an specific column for them.
+You can change the names and types of the columns in the schema to fit your needs.
 
 ### Instantiating the script
 
