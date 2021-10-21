@@ -13,7 +13,7 @@ By default, the tracker stores along every event basic fields like:
 * `event (String)` with a name that can be passed on instantiation to better split events
 * `uuid (String)`. An automatically generated uuid to track a given user through different pages. This ID is the only thing stored in a cookie
 
-Additionally, as part of every event, you can pass along any attribe in JSON format.
+Additionally, as part of every event, you can pass along any attribute in JSON format.
 
 ## Getting Started
 
@@ -31,7 +31,7 @@ You can change the names and types of the columns in the schema to fit your need
 
 ### Instantiating the script
 
-You will need to create an append token with permissions just with write permissions for the tracker Data Source, that you must include on instantiation:
+You will need to create an append token with permissions just with append permissions for the tracker Data Source, that you must include on instantiation:
 
 ```html
 <script data-token="YOUR_TOKEN" data-source="events" src="https://cdn.tinybird.co/static/js/t.js"></script>
