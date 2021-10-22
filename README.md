@@ -20,9 +20,9 @@ Additionally, as part of every event, you can pass along any attribute in JSON f
 
 ### Prerequisite - Creating the Data Source
 
-Before sending any event to Tinybird, you will need a [Data Source](https://docs.tinybird.co/main-concepts.html#data-sources) to store those events.
+Before sending any event to Tinybird, you will need a [Data Source](https://docs.tinybird.co/main-concepts.html) to store those events.
 
-The best way to create a datasource to use along with Tinybird-tracker is via API. The datasource has to contain a certain set of default columns for the data we send by default and you can add your columns for the custom data you want to track.
+The best way to create a Data Source to use along with Tinybird-tracker is via API. The Data Source has to contain a certain set of default columns for the data we send by default and you can add your columns for the custom data you want to track.
 
 The default properties we send are:
 
@@ -54,7 +54,7 @@ The easiest way to get your authentication token to create a Data Source is to c
 
     ![token](https://user-images.githubusercontent.com/1078228/138218035-bc5ca151-e99d-432b-b719-79207ca1cda2.png)
 
-**⚠️Warning!** The token shown in the snippets, the one you copied following this guide, is you admin token. Don't share it or publish in your application. We'll later create a secure token exclusively for adding data to a Data Source. You can manage your tokens via API or using the Auth Tokens section in the UI. More detailed info at [Auth Tokens management](https://docs.tinybird.co/api-reference/token-api.html)
+**⚠️Warning!** The token shown in the snippets, the one you copied following this guide, is you admin token. Don't share it or publish it in your application. We'll later create a secure token exclusively for adding data to a Data Source. You can manage your tokens via API or using the Auth Tokens section in the UI. More detailed info at [Auth Tokens management](https://docs.tinybird.co/api-reference/token-api.html)
 
 **Data Source schema**
 
@@ -75,7 +75,7 @@ The schema needed for the default properties plus that info is
 schema:event String `json:$.event`, timestamp DateTime `json:$.timestamp`, session_start String `json:$.session_start`, uuid String `json:$.uuid`, id String `json:$.id`, userEmail String `json:$.userEmail`, section String `json:$.section`
 ``` 
 
-As you can see, the template is `{name of column} {type} {jsonpath}`
+As you can see, the template for every column is `{name of column} {type} {jsonpath}`
 
 We encourage you to send a homogeneus object each time. That is, the same properties per event. If that's not possible, we advise you to mark the properties that are sent only sometimes as `Nullable`.
 
@@ -83,6 +83,8 @@ In our example, imagine that `section` is a value that you don't send every time
 ```
 section Nullable(String) `json:$.section`
 ```
+
+In any case, the fewer nullable columns you have, the better your queries performance will be.
 
 **Calling the API**
 
@@ -106,9 +108,9 @@ There you go! Now you have a Data Source where Tinybird-tracker can start sendin
 
 **Getting an access token to append data**
 
-In order to make calls to append data to a Data Source, you will need a token. The one we used before is not elligible since it's you admin one and you don't want it to be public in the call you make from your application.
+In order to make calls to append data to a Data Source, you will need a token. The one we used before is not elligible since it's your admin one and you don't want it to be public in the call you make from your application.
 
-Let's create one only for appending to your recently created Data Source.
+Let's create one, only for appending to your recently created Data Source.
 
 1. Go to `Manage Auth Tokens` in the sidebar
 
@@ -144,7 +146,7 @@ Here it is the list of available options for the script:
 | source  |  | Name of the Data Source to send the events to | yes |
 | api | https://api.tinybird.co | API URL origin | no |
 
-In order to use them, add them as data attributes (`data-xxxx`) in the script instantation.
+In order to set their values, add them as data attributes (`data-xxxx`) in the script instantation.
 
 The `api` option selects the API server to call to. It's needed if you are in a different cluster from the default EU one.
 
@@ -153,7 +155,7 @@ The `api` option selects the API server to call to. It's needed if you are in a 
 Once the script is loaded in the DOM, you can start sending events with the `tinybird` object.
 It accepts two parameters, the first one is the event name, and the second one, the rest of the attributes you want to store.
 
-This is an example of storing an event of `pageload` which will be triggered once the script is loaded:
+This is an example of storing a `pageload` event which will be triggered once the script is loaded:
 
 ```html
 <script>
