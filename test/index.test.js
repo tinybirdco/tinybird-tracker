@@ -138,7 +138,7 @@ describe('Tracker', () => {
     w.tinybird = [['pageload', { url: 'https://tinybird.co' }]]
 
     fetch.mockImplementation((url, formData) => {
-      const ndjson = formData.body.get('ndjson')
+      const ndjson = formData.body
       const events = parseEvents(ndjson)
       expect(events.length).toBe(1)
       const event = events[0]
@@ -163,7 +163,7 @@ describe('Tracker', () => {
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn.tinybird.co/v0/events?name=events&token=token',
       {
-        body: jasmine.any(FormData),
+        body: jasmine.any(String),
         method: 'POST'
       }
     )
@@ -185,7 +185,7 @@ describe('Tracker', () => {
     }
 
     fetch.mockImplementation((url, formData) => {
-      const ndjson = formData.body.get('ndjson')
+      const ndjson = formData.body
       const events = parseEvents(ndjson)
       expect(events.length).toBe(1)
       const event = events[0]
@@ -222,7 +222,7 @@ describe('Tracker', () => {
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn.tinybird.co/v0/events?name=hey&token=token',
       {
-        body: jasmine.any(FormData),
+        body: jasmine.any(String),
         method: 'POST'
       }
     )
@@ -250,7 +250,7 @@ describe('Tracker', () => {
     }
 
     fetch.mockImplementation((url, formData) => {
-      const ndjson = formData.body.get('ndjson')
+      const ndjson = formData.body
       const events = parseEvents(ndjson)
       expect(events.length).toBe(1)
       const event = events[0]
@@ -279,7 +279,7 @@ describe('Tracker', () => {
     expect(fetch).toHaveBeenCalledWith(
       'https://cdn.tinybird.co/v0/events?name=hey&token=token',
       {
-        body: jasmine.any(FormData),
+        body: jasmine.any(String),
         method: 'POST'
       }
     )

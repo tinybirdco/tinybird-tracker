@@ -48,12 +48,10 @@ var tracker = function (w) {
       uploading = true
 
       var url = apiUrl + '?name=' + dataSource + '&token=' + token
-      var formData = new FormData()
-      formData.append('ndjson', rowsToNDJSON(events))
 
       fetch(url, {
         method: 'POST',
-        body: formData
+        body: rowsToNDJSON(events)
       })
         .then(function (r) {
           return r.json()
@@ -116,7 +114,7 @@ var tracker = function (w) {
 
   function rowsToNDJSON(events) {
     const stringEvents = events.map(e => JSON.stringify(e))
-    return stringEvents.join('\n') + '\n'
+    return stringEvents.join('\n')
   }
 
   function dateFormatted(d) {
