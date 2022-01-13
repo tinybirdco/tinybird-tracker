@@ -161,7 +161,7 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=events&token=token',
+      'https://cdn.tinybird.co/v0/events?name=events&token=token',
       {
         body: jasmine.any(FormData),
         method: 'POST'
@@ -220,7 +220,7 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
+      'https://cdn.tinybird.co/v0/events?name=hey&token=token',
       {
         body: jasmine.any(FormData),
         method: 'POST'
@@ -277,7 +277,7 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/datasources?format=ndjson&mode=append&name=hey&token=token',
+      'https://cdn.tinybird.co/v0/events?name=hey&token=token',
       {
         body: jasmine.any(FormData),
         method: 'POST'
