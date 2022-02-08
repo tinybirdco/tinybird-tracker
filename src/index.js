@@ -9,8 +9,7 @@ var tracker = function (w) {
   }
 
   var apiUrl =
-    (getParameterByName('api') || new URL(doc.currentScript.src).origin) +
-    '/v0/events'
+    (getParameterByName('api') || 'https://api.tinybird.co') + '/v0/events'
   var dataSource = getParameterByName('source')
   var token = getParameterByName('token')
   var cookieDomain = getParameterByName('cookie-domain') || w.location.hostname
