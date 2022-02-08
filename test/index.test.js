@@ -86,6 +86,36 @@ describe('Tracker', () => {
       expect(w.tinybird).toEqual(jasmine.any(Function))
     })
 
+    it('should init properly using another function', () => {
+      let w = {
+        document: {
+          cookie: 'coooooookie',
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token',
+              'data-function': 'tbt'
+            }
+          )
+        },
+        addEventListener: jest.fn(),
+        localStorage: new localstorage(),
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+
+      tracker(w)
+
+      jest.advanceTimersByTime(5000)
+
+      expect(w.tbt).toBeDefined()
+      expect(w.tinybird).not.toBeDefined()
+      expect(w.tbt).toEqual(jasmine.any(Function))
+      expect(w.tinybird).not.toEqual(jasmine.any(Function))
+    })
+
     it('should not initialize without a Data Source', () => {
       let w = {
         document: {

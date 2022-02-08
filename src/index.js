@@ -13,7 +13,8 @@ var tracker = function (w) {
     '/v0/events'
   var dataSource = getParameterByName('source')
   var token = getParameterByName('token')
-  var cookieDomain = getParameterByName('cookie-domain')
+  var cookieDomain = getParameterByName('cookie-domain') || w.location.hostname
+  var functionName = getParameterByName('function') || 'tinybird'
 
   if (!dataSource)
     throw new Error("'dataSource' name is required to start sending events")
@@ -99,9 +100,9 @@ var tracker = function (w) {
   w.addEventListener('beforeunload', die)
   w.addEventListener('unload', die, false)
 
-  // Overwritte tinybird function
-  var queue = w.tinybird || []
-  w.tinybird = addEvent
+  // Overwritte main function
+  var queue = w[functionName] || []
+  w[functionName] = addEvent
   for (var i = 0; i < queue.length; i++) {
     addEvent.apply(this, queue[i])
   }
@@ -133,12 +134,7 @@ var tracker = function (w) {
 
   function setCookie(name, value) {
     w.document.cookie =
-      name +
-      '=' +
-      (value || '') +
-      '; path=/' +
-      '; domain=' +
-      (cookieDomain || w.location.hostname)
+      name + '=' + (value || '') + '; path=/' + '; domain=' + cookieDomain
   }
 
   function getCookie(name) {
