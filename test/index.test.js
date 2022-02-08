@@ -72,7 +72,10 @@ describe('Tracker', () => {
           )
         },
         addEventListener: jest.fn(),
-        localStorage: new localstorage()
+        localStorage: new localstorage(),
+        location: {
+          hostname: 'tinybird.co'
+        }
       }
 
       tracker(w)
@@ -95,7 +98,10 @@ describe('Tracker', () => {
           )
         },
         addEventListener: jest.fn(),
-        localStorage: new localstorage()
+        localStorage: new localstorage(),
+        location: {
+          hostname: 'tinybird.co'
+        }
       }
       expect(() => {
         tracker(w)
@@ -114,7 +120,10 @@ describe('Tracker', () => {
           )
         },
         addEventListener: jest.fn(),
-        localStorage: new localstorage()
+        localStorage: new localstorage(),
+        location: {
+          hostname: 'tinybird.co'
+        }
       }
       expect(() => {
         tracker(w)
@@ -132,7 +141,10 @@ describe('Tracker', () => {
         })
       },
       addEventListener: jest.fn(),
-      localStorage: new localstorage()
+      localStorage: new localstorage(),
+      location: {
+        hostname: 'tinybird.co'
+      }
     }
 
     w.tinybird = [['pageload', { url: 'https://tinybird.co' }]]
@@ -181,7 +193,10 @@ describe('Tracker', () => {
         })
       },
       addEventListener: jest.fn(),
-      localStorage: new localstorage()
+      localStorage: new localstorage(),
+      location: {
+        hostname: 'tinybird.co'
+      }
     }
 
     fetch.mockImplementation((url, formData) => {
@@ -246,7 +261,10 @@ describe('Tracker', () => {
         })
       },
       addEventListener: jest.fn(),
-      localStorage: ls
+      localStorage: ls,
+      location: {
+        hostname: 'tinybird.co'
+      }
     }
 
     fetch.mockImplementation((url, formData) => {
@@ -298,7 +316,10 @@ describe('Tracker', () => {
         })
       },
       addEventListener: jest.fn(),
-      localStorage: ls
+      localStorage: ls,
+      location: {
+        hostname: 'tinybird.co'
+      }
     }
 
     w.tinybird = [['pageload', { url: 'https://tinybird.co', page: 'landing' }]]

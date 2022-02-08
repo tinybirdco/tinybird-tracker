@@ -138,7 +138,7 @@ var tracker = function (w) {
       (value || '') +
       '; path=/' +
       '; domain=' +
-      (cookieDomain || window.location.hostname)
+      (cookieDomain || w.location.hostname)
   }
 
   function getCookie(name) {
