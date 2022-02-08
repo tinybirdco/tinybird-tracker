@@ -13,6 +13,7 @@ var tracker = function (w) {
     '/v0/events'
   var dataSource = getParameterByName('source')
   var token = getParameterByName('token')
+  var cookieDomain = getParameterByName('cookie-domain')
 
   if (!dataSource)
     throw new Error("'dataSource' name is required to start sending events")
@@ -131,7 +132,13 @@ var tracker = function (w) {
   }
 
   function setCookie(name, value) {
-    w.document.cookie = name + '=' + (value || '') + '; path=/'
+    w.document.cookie =
+      name +
+      '=' +
+      (value || '') +
+      '; path=/' +
+      '; domain=' +
+      (cookieDomain || window.location.hostname)
   }
 
   function getCookie(name) {
