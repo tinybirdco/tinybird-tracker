@@ -1,7 +1,5 @@
 import fetch from 'unfetch'
 
-var dryRun = true
-
 var tracker = function (w) {
   var doc = w.document
   var storage = w.localStorage
@@ -18,20 +16,19 @@ var tracker = function (w) {
   var cookieDomain = getParameterByName('cookie-domain') || w.location.hostname
   var functionName = getParameterByName('function') || 'tinybird'
 
-  if (!dryRun) {
-    if (!dataSource) {
-      throw new Error("'dataSource' name is required to start sending events")
-    }
-    if (!token) {
-      throw new Error("'token' is required to start sending events")
-    }
+  if (!dataSource) {
+    throw new Error("'dataSource' name is required to start sending events")
+  }
+  if (!token) {
+    throw new Error("'token' is required to start sending events")
   }
 
   var COOKIE_NAME = 'tinybird'
   var STORAGE_ITEM = 'tinybird_events'
   var STORAGE_LAST_TIMESTAMP = 'tinybird_last_activity'
   var MAX_RETRIES = 5
-  var TIMEOUT = dryRun ? 500 : 5000
+  var TIMEOUT = 5000
+  var REFRESH_SESSION = 30 * 60 * 1000
 
   var userCookie = getCookie(COOKIE_NAME)
   var events = JSON.parse(storage.getItem(STORAGE_ITEM) || '[]')
@@ -68,31 +65,25 @@ var tracker = function (w) {
 
       var url = apiUrl + '?name=' + dataSource + '&token=' + token
 
-      if (dryRun) {
-        console.log('Sending... (dry-run)')
-        console.table(events)
-        clearEvents()
-      } else {
-        fetch(url, {
-          method: 'POST',
-          body: rowsToNDJSON(events)
+      fetch(url, {
+        method: 'POST',
+        body: rowsToNDJSON(events)
+      })
+        .then(function (r) {
+          return r.json()
         })
-          .then(function (r) {
-            return r.json()
-          })
-          .then(function (res) {
-            if (res) {
-              clearEvents()
-              delayUpload(TIMEOUT, MAX_RETRIES)
-            } else {
-              onError()
-            }
-            uploading = false
-          })
-          .catch(function (e) {
+        .then(function (res) {
+          if (res) {
+            clearEvents()
+            delayUpload(TIMEOUT, MAX_RETRIES)
+          } else {
             onError()
-          })
-      }
+          }
+          uploading = false
+        })
+        .catch(function (e) {
+          onError()
+        })
     } else {
       delayUpload(TIMEOUT, MAX_RETRIES)
     }
@@ -104,6 +95,10 @@ var tracker = function (w) {
     }, t)
   }
 
+  function saveLastActivityTimestamp() {
+    storage.setItem(STORAGE_LAST_TIMESTAMP, JSON.stringify(getUTCNow()))
+  }
+
   function addEvent(eventName, eventProps) {
     var timestamp = getUTCNow()
     var ev = eventProps || {}
@@ -111,10 +106,9 @@ var tracker = function (w) {
     ev['timestamp'] = utcToFormattedDate(timestamp)
     ev['session_start'] = utcToFormattedDate(sessionStart)
     ev['uuid'] = uuid
-
-    storage.setItem(STORAGE_LAST_TIMESTAMP, JSON.stringify(timestamp))
-
     events.push(ev)
+
+    saveLastActivityTimestamp()
   }
 
   function die() {
@@ -122,8 +116,43 @@ var tracker = function (w) {
     uploadEvents()
   }
 
+  function refreshSessionStart() {
+    var now = getUTCNow()
+    var lastActivityTimestamp = storage.getItem(STORAGE_LAST_TIMESTAMP)
+    if (lastActivityTimestamp !== null) {
+      var elapsed = now - parseInt(lastActivityTimestamp, 10)
+      if (elapsed > REFRESH_SESSION) {
+        sessionStart = now
+        setCookie(COOKIE_NAME, formatCookieValue(uuid, sessionStart))
+        saveLastActivityTimestamp()
+      }
+    }
+  }
+
+  var hidden, visibilityChange
+  if (typeof doc.hidden !== 'undefined') {
+    // Opera 12.10 and Firefox 18 and later support
+    hidden = 'hidden'
+    visibilityChange = 'visibilitychange'
+  } else if (typeof doc.msHidden !== 'undefined') {
+    hidden = 'msHidden'
+    visibilityChange = 'msvisibilitychange'
+  } else if (typeof doc.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden'
+    visibilityChange = 'webkitvisibilitychange'
+  }
+
+  function handleVisibilityChange() {
+    if (!doc[hidden]) {
+      refreshSessionStart()
+    }
+  }
+
   w.addEventListener('beforeunload', die)
   w.addEventListener('unload', die, false)
+  doc.addEventListener(visibilityChange, handleVisibilityChange, false)
+
+  refreshSessionStart()
 
   // Overwritte main function
   var queue = w[functionName] || []
