@@ -69,7 +69,8 @@ describe('Tracker', () => {
               'data-source': 'hey',
               'data-token': 'token'
             }
-          )
+          ),
+          addEventListener: jest.fn()
         },
         addEventListener: jest.fn(),
         localStorage: new localstorage(),
@@ -97,7 +98,8 @@ describe('Tracker', () => {
               'data-token': 'token',
               'data-function': 'tbt'
             }
-          )
+          ),
+          addEventListener: jest.fn()
         },
         addEventListener: jest.fn(),
         localStorage: new localstorage(),
@@ -125,7 +127,8 @@ describe('Tracker', () => {
             {
               'data-token': 'hey'
             }
-          )
+          ),
+          addEventListener: jest.fn()
         },
         addEventListener: jest.fn(),
         localStorage: new localstorage(),
@@ -147,7 +150,8 @@ describe('Tracker', () => {
             {
               'data-source': 'hey'
             }
-          )
+          ),
+          addEventListener: jest.fn()
         },
         addEventListener: jest.fn(),
         localStorage: new localstorage(),
@@ -168,7 +172,8 @@ describe('Tracker', () => {
         currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
           'data-token': 'token',
           'data-source': 'events'
-        })
+        }),
+        addEventListener: jest.fn()
       },
       addEventListener: jest.fn(),
       localStorage: new localstorage(),
@@ -203,7 +208,7 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/events?name=events&token=token',
+      'https://api.tinybird.co/v0/events?name=events&token=token',
       {
         body: jasmine.any(String),
         method: 'POST'
@@ -220,7 +225,8 @@ describe('Tracker', () => {
         currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
           'data-source': 'hey',
           'data-token': 'token'
-        })
+        }),
+        addEventListener: jest.fn()
       },
       addEventListener: jest.fn(),
       localStorage: new localstorage(),
@@ -265,7 +271,7 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/events?name=hey&token=token',
+      'https://api.tinybird.co/v0/events?name=hey&token=token',
       {
         body: jasmine.any(String),
         method: 'POST'
@@ -288,7 +294,8 @@ describe('Tracker', () => {
         currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
           'data-source': 'hey',
           'data-token': 'token'
-        })
+        }),
+        addEventListener: jest.fn()
       },
       addEventListener: jest.fn(),
       localStorage: ls,
@@ -325,7 +332,7 @@ describe('Tracker', () => {
     await flushPromises()
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://cdn.tinybird.co/v0/events?name=hey&token=token',
+      'https://api.tinybird.co/v0/events?name=hey&token=token',
       {
         body: jasmine.any(String),
         method: 'POST'
@@ -343,7 +350,8 @@ describe('Tracker', () => {
         currentScript: new CurrentScript('https://cdn.tinybird.co/static/js/t.js', {
           'data-source': 'hey',
           'data-token': 'token'
-        })
+        }),
+        addEventListener: jest.fn()
       },
       addEventListener: jest.fn(),
       localStorage: ls,
@@ -399,5 +407,115 @@ describe('Tracker', () => {
     expect(fetch.mock.calls.length).toBe(6)
 
     done()
+  })
+
+  describe('cookie management', () => {
+    it('when there is no cookie, we create one', () => {
+      const ls = new localstorage()
+      let w = {
+        document: {
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token'
+            }
+          ),
+          addEventListener: jest.fn()
+        },
+        addEventListener: jest.fn(),
+        localStorage: ls,
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+
+      tracker(w)
+
+      expect(w.document.cookie).toMatch(
+        /tinybird=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}:\d{13}; path=\/; domain=tinybird.co/
+      )
+    })
+
+    it('when there is cookie, we parse correctly its contents', async () => {
+      const ls = new localstorage()
+      let w = {
+        document: {
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token'
+            }
+          ),
+          addEventListener: jest.fn(),
+          cookie: 'tinybird=98d935c1-63b1-4dcd-aded-e84856c57711:1644413400000' // 2022-02-09 13:30:00
+        },
+        addEventListener: jest.fn(),
+        localStorage: ls,
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+      tracker(w)
+
+      w.tinybird('test')
+
+      await flushPromises()
+      jest.advanceTimersByTime(5000)
+      await flushPromises()
+
+      const calls = fetch.mock.calls
+      expect(calls[0][0]).toEqual(
+        'https://api.tinybird.co/v0/events?name=hey&token=token'
+      )
+      expect(calls[0][1].body).toBeTruthy()
+      expect(JSON.parse(calls[0][1].body)).toEqual(
+        expect.objectContaining({
+          event: 'test',
+          uuid: '98d935c1-63b1-4dcd-aded-e84856c57711',
+          session_start: '2022-02-09 13:30:00'
+        })
+      )
+    })
+
+    it('if more than 30 minutes have elapsed since the last activity, we reset the session start', async () => {
+      const ls = new localstorage()
+      ls.setItem('tinybird_last_activity', Date.now() - 31 * 60 * 1000)
+      let w = {
+        document: {
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token'
+            }
+          ),
+          addEventListener: jest.fn(),
+          cookie: 'tinybird=98d935c1-63b1-4dcd-aded-e84856c57711:1644413400000' // 2022-02-09 13:30:00
+        },
+        addEventListener: jest.fn(),
+        localStorage: ls,
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+      tracker(w)
+
+      w.tinybird('test')
+
+      await flushPromises()
+      jest.advanceTimersByTime(5000)
+      await flushPromises()
+
+      const calls = fetch.mock.calls
+      expect(calls[0][0]).toEqual(
+        'https://api.tinybird.co/v0/events?name=hey&token=token'
+      )
+      expect(calls[0][1].body).toBeTruthy()
+      const newSessionStart = JSON.parse(calls[0][1].body).session_start
+      const newSessionStartUTC = Date.parse(newSessionStart.replace(' ', 'T') + 'Z')
+      expect(newSessionStartUTC > 1644413400000).toBe(true)
+    })
   })
 })
