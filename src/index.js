@@ -96,13 +96,14 @@ var tracker = function (w) {
     storage.setItem(STORAGE_LAST_TIMESTAMP, JSON.stringify(getUTCNow()))
   }
 
-  function addEvent(eventName, eventProps) {
+  function addEvent(eventName, eventProps, anonymize) {
     var timestamp = getUTCNow()
     var ev = eventProps || {}
     ev['event'] = eventName || ''
     ev['timestamp'] = utcToFormattedDate(timestamp)
     ev['session_start'] = utcToFormattedDate(sessionStart)
-    ev['uuid'] = uuid
+    ev['uuid'] = !anonymize || (anonymize && anonymize !== true) ? uuid : ''
+    
     events.push(ev)
 
     saveLastActivityTimestamp()

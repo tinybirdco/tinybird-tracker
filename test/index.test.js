@@ -401,6 +401,47 @@ describe('Tracker', () => {
     done()
   })
 
+  it('allow to not send the generated uuid', async function () {
+    let w = {
+      document: {
+        currentScript: new CurrentScript(
+          'https://cdn.tinybird.co/static/js/t.js',
+          {
+            'data-source': 'hey',
+            'data-token': 'token'
+          }
+        ),
+        addEventListener: jest.fn()
+      },
+      addEventListener: jest.fn(),
+      localStorage: new localstorage(),
+      location: {
+        hostname: 'tinybird.co'
+      }
+    }
+    tracker(w)
+
+    w.tinybird('pageView', { whatever: 'hey' }, true)
+
+    await flushPromises()
+    jest.advanceTimersByTime(1000)
+    await flushPromises()
+
+    const calls = fetch.mock.calls
+    expect(calls[0][0]).toEqual(
+      'https://api.tinybird.co/v0/events?name=hey&token=token'
+    )
+    expect(calls[0][1].body).toBeTruthy()
+    expect(JSON.parse(calls[0][1].body)).toEqual(
+      expect.objectContaining({
+        event: 'pageView',
+        uuid: '',
+        session_start: jasmine.any(String),
+        whatever: 'hey'
+      })
+    )
+  })
+
   describe('cookie management', () => {
     it('when there is no cookie, we create one', () => {
       const ls = new localstorage()
@@ -452,6 +493,90 @@ describe('Tracker', () => {
       tracker(w)
 
       w.tinybird('test')
+
+      await flushPromises()
+      jest.advanceTimersByTime(1000)
+      await flushPromises()
+
+      const calls = fetch.mock.calls
+      expect(calls[0][0]).toEqual(
+        'https://api.tinybird.co/v0/events?name=hey&token=token'
+      )
+      expect(calls[0][1].body).toBeTruthy()
+      expect(JSON.parse(calls[0][1].body)).toEqual(
+        expect.objectContaining({
+          event: 'test',
+          uuid: '98d935c1-63b1-4dcd-aded-e84856c57711',
+          session_start: '2022-02-09 13:30:00'
+        })
+      )
+    })
+
+    it('allow to not send the cookie uuid', async function () {
+      const ls = new localstorage()
+      let w = {
+        document: {
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token'
+            }
+          ),
+          addEventListener: jest.fn(),
+          cookie: 'tinybird=98d935c1-63b1-4dcd-aded-e84856c57711:1644413400000' // 2022-02-09 13:30:00
+        },
+        addEventListener: jest.fn(),
+        localStorage: ls,
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+      tracker(w)
+
+      w.tinybird('test', null, true)
+
+      await flushPromises()
+      jest.advanceTimersByTime(1000)
+      await flushPromises()
+
+      const calls = fetch.mock.calls
+      expect(calls[0][0]).toEqual(
+        'https://api.tinybird.co/v0/events?name=hey&token=token'
+      )
+      expect(calls[0][1].body).toBeTruthy()
+      expect(JSON.parse(calls[0][1].body)).toEqual(
+        expect.objectContaining({
+          event: 'test',
+          uuid: '',
+          session_start: '2022-02-09 13:30:00'
+        })
+      )
+    })
+
+    it('force to send the cookie uuid', async function () {
+      const ls = new localstorage()
+      let w = {
+        document: {
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token'
+            }
+          ),
+          addEventListener: jest.fn(),
+          cookie: 'tinybird=98d935c1-63b1-4dcd-aded-e84856c57711:1644413400000' // 2022-02-09 13:30:00
+        },
+        addEventListener: jest.fn(),
+        localStorage: ls,
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+      tracker(w)
+
+      w.tinybird('test', null, false)
 
       await flushPromises()
       jest.advanceTimersByTime(1000)
