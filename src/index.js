@@ -26,7 +26,7 @@ var tracker = function (w) {
   var STORAGE_ITEM = 'tinybird_events'
   var STORAGE_LAST_TIMESTAMP = 'tinybird_last_activity'
   var MAX_RETRIES = 5
-  var TIMEOUT = 5000
+  var TIMEOUT = 1000
   var REFRESH_SESSION = 30 * 60 * 1000
 
   var userCookie = getCookie(COOKIE_NAME)
@@ -69,10 +69,8 @@ var tracker = function (w) {
         body: rowsToNDJSON(events)
       })
         .then(function (r) {
-          return r.json()
-        })
-        .then(function (res) {
-          if (res) {
+          var status = r ? r.status : 0
+          if (status === 200 || status === 202) {
             clearEvents()
             delayUpload(TIMEOUT, MAX_RETRIES)
           } else {
