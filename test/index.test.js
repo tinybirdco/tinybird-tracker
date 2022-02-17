@@ -43,9 +43,7 @@ describe('Tracker', () => {
     jest.useFakeTimers()
 
     fetch.mockImplementation(() => {
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
+      return Promise.resolve({ status: 202 })
     })
   })
 
@@ -81,7 +79,7 @@ describe('Tracker', () => {
 
       tracker(w)
 
-      jest.advanceTimersByTime(5000)
+      jest.advanceTimersByTime(1000)
 
       expect(w.tinybird).toBeDefined()
       expect(w.tinybird).toEqual(jasmine.any(Function))
@@ -110,7 +108,7 @@ describe('Tracker', () => {
 
       tracker(w)
 
-      jest.advanceTimersByTime(5000)
+      jest.advanceTimersByTime(1000)
 
       expect(w.tbt).toBeDefined()
       expect(w.tinybird).not.toBeDefined()
@@ -196,14 +194,12 @@ describe('Tracker', () => {
         session_start: jasmine.any(String),
         uuid: jasmine.any(String)
       })
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
+      return Promise.resolve({ status: 202 })
     })
 
     tracker(w)
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
@@ -218,7 +214,7 @@ describe('Tracker', () => {
     done()
   })
 
-  it('should send a new event after 2secs', async done => {
+  it('should send a new event after 1 second', async done => {
     let a = {
       document: {
         cookie: 'coooooookie',
@@ -249,9 +245,7 @@ describe('Tracker', () => {
         session_start: jasmine.any(String),
         uuid: jasmine.any(String)
       })
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
+      return Promise.resolve({ status: 202 })
     })
 
     tracker(a)
@@ -266,7 +260,7 @@ describe('Tracker', () => {
 
     expect(fetch).not.toHaveBeenCalled()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
@@ -281,7 +275,7 @@ describe('Tracker', () => {
     done()
   })
 
-  it('should send pending localStorage events after 2sec', async done => {
+  it('should send pending localStorage events after 1 second', async done => {
     const ls = new localstorage()
     ls.setItem(
       'tinybird_events',
@@ -318,16 +312,14 @@ describe('Tracker', () => {
         session_start: jasmine.any(String),
         uuid: jasmine.any(String)
       })
-      return Promise.resolve({
-        json: () => Promise.resolve('a')
-      })
+      return Promise.resolve({ status: 202 })
     })
 
     tracker(w)
 
     expect(fetch).not.toHaveBeenCalled()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
@@ -342,7 +334,7 @@ describe('Tracker', () => {
     done()
   })
 
-  it('should retry 6 times more if the first fetch failed', async done => {
+  it('should retry 5 times more if the first fetch failed', async done => {
     const ls = new localstorage()
     let w = {
       document: {
@@ -363,7 +355,7 @@ describe('Tracker', () => {
     w.tinybird = [['pageload', { url: 'https://tinybird.co', page: 'landing' }]]
 
     fetch.mockImplementation((url, formData) => {
-      return Promise.reject()
+      return Promise.resolve({ status: 400 })
     })
 
     fetch.mockClear()
@@ -372,37 +364,37 @@ describe('Tracker', () => {
 
     await flushPromises()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     await flushPromises()
 
     expect(fetch.mock.calls.length).toBe(6)
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     expect(fetch.mock.calls.length).toBe(6)
 
-    jest.advanceTimersByTime(5000)
+    jest.advanceTimersByTime(1000)
 
     expect(fetch.mock.calls.length).toBe(6)
 
@@ -462,7 +454,7 @@ describe('Tracker', () => {
       w.tinybird('test')
 
       await flushPromises()
-      jest.advanceTimersByTime(5000)
+      jest.advanceTimersByTime(1000)
       await flushPromises()
 
       const calls = fetch.mock.calls
@@ -505,7 +497,7 @@ describe('Tracker', () => {
       w.tinybird('test')
 
       await flushPromises()
-      jest.advanceTimersByTime(5000)
+      jest.advanceTimersByTime(1000)
       await flushPromises()
 
       const calls = fetch.mock.calls
