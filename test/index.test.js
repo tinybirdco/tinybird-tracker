@@ -408,7 +408,8 @@ describe('Tracker', () => {
           'https://cdn.tinybird.co/static/js/t.js',
           {
             'data-source': 'hey',
-            'data-token': 'token'
+            'data-token': 'token',
+            'data-cookie-enabled': false
           }
         ),
         addEventListener: jest.fn()
@@ -421,7 +422,7 @@ describe('Tracker', () => {
     }
     tracker(w)
 
-    w.tinybird('pageView', { whatever: 'hey' }, true)
+    w.tinybird('pageView', { whatever: 'hey' })
 
     await flushPromises()
     jest.advanceTimersByTime(1000)
@@ -470,6 +471,32 @@ describe('Tracker', () => {
       )
     })
 
+    it('when there is no cookie, we don\'t create one if we don\'t want to track the user', () => {
+      const ls = new localstorage()
+      let w = {
+        document: {
+          currentScript: new CurrentScript(
+            'https://cdn.tinybird.co/static/js/t.js',
+            {
+              'data-source': 'hey',
+              'data-token': 'token',
+              'data-cookie-enabled': false
+            }
+          ),
+          addEventListener: jest.fn()
+        },
+        addEventListener: jest.fn(),
+        localStorage: ls,
+        location: {
+          hostname: 'tinybird.co'
+        }
+      }
+
+      tracker(w)
+
+      expect(w.document.cookie).toBe(undefined)
+    })
+
     it('when there is cookie, we parse correctly its contents', async () => {
       const ls = new localstorage()
       let w = {
@@ -512,7 +539,7 @@ describe('Tracker', () => {
       )
     })
 
-    it('allow to not send the cookie uuid', async function () {
+    it('should not send the cookie uuid if we don\'t enable it', async function () {
       const ls = new localstorage()
       let w = {
         document: {
@@ -520,7 +547,8 @@ describe('Tracker', () => {
             'https://cdn.tinybird.co/static/js/t.js',
             {
               'data-source': 'hey',
-              'data-token': 'token'
+              'data-token': 'token',
+              'data-cookie-enabled': false
             }
           ),
           addEventListener: jest.fn(),
@@ -534,7 +562,7 @@ describe('Tracker', () => {
       }
       tracker(w)
 
-      w.tinybird('test', null, true)
+      w.tinybird('test')
 
       await flushPromises()
       jest.advanceTimersByTime(1000)
@@ -549,9 +577,11 @@ describe('Tracker', () => {
         expect.objectContaining({
           event: 'test',
           uuid: '',
-          session_start: '2022-02-09 13:30:00'
+          session_start: jasmine.any(String)
         })
       )
+
+      expect(w.document.cookie).toMatch('tinybird=; path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; domain=tinybird.co')
     })
 
     it('force to send the cookie uuid', async function () {
