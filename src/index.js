@@ -12,6 +12,7 @@ var tracker = function (w) {
     (getParameterByName('api') || 'https://api.tinybird.co') + '/v0/events'
   var dataSource = getParameterByName('source')
   var token = getParameterByName('token')
+  var cookieEnabled = getParameterByName('cookie-enabled') != null ? getParameterByName('cookie-enabled') : true
   var cookieDomain = getParameterByName('cookie-domain') || w.location.hostname
   var functionName = getParameterByName('function') || 'tinybird'
 
@@ -35,16 +36,22 @@ var tracker = function (w) {
   var sessionStart = getUTCNow()
   var uploading = false
 
-  if (!userCookie) {
-    setCookie(COOKIE_NAME, formatCookieValue(uuid, sessionStart))
-  } else {
-    var cookieValue = parseCookieValue(getCookie(COOKIE_NAME))
-    if (cookieValue) {
-      uuid = cookieValue.id
-      sessionStart = cookieValue.sessionStart
-    } else {
-      // Old cookie format - Let's reset it with a new value
+  if (cookieEnabled) {
+    if (!userCookie) {
       setCookie(COOKIE_NAME, formatCookieValue(uuid, sessionStart))
+    } else {
+      var cookieValue = parseCookieValue(getCookie(COOKIE_NAME))
+      if (cookieValue) {
+        uuid = cookieValue.id
+        sessionStart = cookieValue.sessionStart
+      } else {
+        // Old cookie format - Let's reset it with a new value
+        setCookie(COOKIE_NAME, formatCookieValue(uuid, sessionStart))
+      }
+    }
+  } else {
+    if (userCookie) {
+      deleteCookie(COOKIE_NAME)
     }
   }
 
@@ -96,13 +103,13 @@ var tracker = function (w) {
     storage.setItem(STORAGE_LAST_TIMESTAMP, JSON.stringify(getUTCNow()))
   }
 
-  function addEvent(eventName, eventProps, anonymize) {
+  function addEvent(eventName, eventProps) {
     var timestamp = getUTCNow()
     var ev = eventProps || {}
     ev['event'] = eventName || ''
     ev['timestamp'] = utcToFormattedDate(timestamp)
     ev['session_start'] = utcToFormattedDate(sessionStart)
-    ev['uuid'] = !anonymize || (anonymize && anonymize !== true) ? uuid : ''
+    ev['uuid'] = cookieEnabled ? uuid : ''
     
     events.push(ev)
 
@@ -121,7 +128,7 @@ var tracker = function (w) {
       var elapsed = now - parseInt(lastActivityTimestamp, 10)
       if (elapsed > REFRESH_SESSION) {
         sessionStart = now
-        setCookie(COOKIE_NAME, formatCookieValue(uuid, sessionStart))
+        cookieEnabled && setCookie(COOKIE_NAME, formatCookieValue(uuid, sessionStart))
         saveLastActivityTimestamp()
       }
     }
@@ -218,7 +225,7 @@ var tracker = function (w) {
 
   function setCookie(name, value) {
     w.document.cookie =
-      name + '=' + (value || '') + '; path=/' + '; domain=' + cookieDomain
+      name + '=' + (value || '') + '; path=/; domain=' + cookieDomain
   }
 
   function getCookie(name) {
@@ -236,6 +243,10 @@ var tracker = function (w) {
       }
     }
     return null
+  }
+
+  function deleteCookie(name) {
+    w.document.cookie = name +'=; path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; domain=' + cookieDomain
   }
 
   function getParameterByName(name) {
