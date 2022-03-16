@@ -12,7 +12,7 @@ var tracker = function (w) {
     (getParameterByName('api') || 'https://api.tinybird.co') + '/v0/events'
   var dataSource = getParameterByName('source')
   var token = getParameterByName('token')
-  var cookieEnabled = getParameterByName('cookie-enabled') != null ? getParameterByName('cookie-enabled') : true
+  var cookieEnabled = getParameterByName('cookie-enabled') === 'false' ? false : true
   var cookieDomain = getParameterByName('cookie-domain') || w.location.hostname
   var functionName = getParameterByName('function') || 'tinybird'
 
