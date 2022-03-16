@@ -409,7 +409,7 @@ describe('Tracker', () => {
           {
             'data-source': 'hey',
             'data-token': 'token',
-            'data-cookie-enabled': false
+            'data-cookie-enabled': 'false'
           }
         ),
         addEventListener: jest.fn()
@@ -480,7 +480,7 @@ describe('Tracker', () => {
             {
               'data-source': 'hey',
               'data-token': 'token',
-              'data-cookie-enabled': false
+              'data-cookie-enabled': 'false'
             }
           ),
           addEventListener: jest.fn()
@@ -548,7 +548,7 @@ describe('Tracker', () => {
             {
               'data-source': 'hey',
               'data-token': 'token',
-              'data-cookie-enabled': false
+              'data-cookie-enabled': 'false'
             }
           ),
           addEventListener: jest.fn(),
