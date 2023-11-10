@@ -1,5 +1,6 @@
-# tinybird-tracker ![example workflow](https://github.com/tinybirdco/tinybird-tracker/actions/workflows/main.yml/badge.svg)
+# DEPRECATED: tinybird-tracker [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
+⛔️ This is no longer supported, please consider using [web-analytics-starter-kit](https://github.com/tinybirdco/web-analytics-starter-kit) instead ⛔️
 
 A simple tracker in JavaScript to upload events directly from the browser to [Tinybird](https://www.tinybird.co).
 
